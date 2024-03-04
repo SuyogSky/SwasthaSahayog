@@ -1,0 +1,10 @@
+.doctor-dashboard-section{
+    padding: 100px 6%;
+    display: flex;
+    gap: 40px;
+    align-items: start;
+    .left{
+        position: sticky;
+        top: 85px;
+    }
+}

@@ -1,0 +1,48 @@
+:root{
+    --main-color: #88CB44;
+    --main-color-light-1: #B9E19D;
+    --main-color-light: #effce8;
+    --main-color-dark: #6aa231;
+}
+
+@mixin xsm {
+    @media only screen and (max-width: 320px) {
+        @content;
+    }
+}
+
+@mixin sm {
+    @media only screen and (max-width: 640px) {
+        @content;
+    }
+}
+
+@mixin btn{
+    @media only screen and (max-width: 768px) {
+        @content;
+    }
+}
+
+@mixin md {
+    @media only screen and (max-width: 850px) {
+        @content;
+    }
+}
+
+@mixin lg {
+    @media only screen and (max-width: 1024px) {
+        @content;
+    }
+}
+
+@mixin xl {
+    @media only screen and (max-width: 1280px) {
+        @content;
+    }
+}
+
+@mixin xxl {
+    @media only screen and (max-width: 1536px) {
+        @content;
+    }
+}

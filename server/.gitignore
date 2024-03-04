@@ -1,0 +1,11 @@
+# Ignore virtual environment
+env/
+
+# Other Django-related files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+
+# Other files or directories you want to ignore

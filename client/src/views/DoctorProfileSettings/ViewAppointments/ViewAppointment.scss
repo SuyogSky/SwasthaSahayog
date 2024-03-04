@@ -1,0 +1,221 @@
+.view-doctor-appointments {
+    width: 100%;
+
+    .tab-bar-container {
+        width: 100%;
+        margin-bottom: 20px;
+
+        ul {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            list-style: none;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.05);
+
+            li {
+                padding: 10px 0;
+                width: 100%;
+                text-align: center;
+                cursor: pointer;
+
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.04);
+                }
+
+                .count {
+                    background-color: rgba(0, 0, 0, 0.1);
+                    font-weight: 500;
+                    padding: 2px 4px;
+                    font-size: 14px;
+                    border-radius: 4px;
+                    margin-left: 10px;
+                }
+
+                &.active {
+                    border-bottom: 3px solid var(--main-color);
+                    background-color: rgba(0, 0, 0, 0.05);
+                    font-weight: 500;
+
+                    .count {
+                        background-color: rgba(0, 0, 0, 0.1);
+                        background-color: var(--main-color);
+                        font-weight: 600;
+                        color: var(--main-color-dark);
+                        color: white;
+                    }
+                }
+            }
+        }
+    }
+
+    .table-container {
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 6px;
+        overflow: hidden;
+
+        table {
+            width: 100%;
+
+            thead {
+                background-color: var(--main-color-light);
+
+                th {
+                    padding: 10px 0;
+                    padding-left: 20px;
+                }
+            }
+
+            tbody {
+                td {
+                    padding: 15px 0;
+                    padding-left: 20px;
+
+                    &.status {
+                        p {
+                            padding: 4px 0;
+                            width: 85px;
+                            font-size: 11px;
+                            font-weight: 500;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 5px;
+                            letter-spacing: 0.5px;
+                        }
+
+                        &.pending {
+                            p {
+                                background-color: #ffbb0042 !important;
+                                border: 1px solid #ffbb0042 !important;
+                                color: #c79530 !important;
+                            }
+                        }
+
+                        &.approved {
+                            p {
+                                background-color: #0062ff26 !important;
+                                border: 1px solid #0062ff26 !important;
+                                color: #7485f8 !important;
+                            }
+                        }
+
+                        &.rejected {
+                            p {
+                                background-color: #f0735a1a !important;
+                                border: 1px solid #f0735a1a !important;
+                                color: #f0735a !important;
+                            }
+                        }
+
+                        &.completed {
+                            p {
+                                background-color: #53c7971a !important;
+                                border: 1px solid #53c7971a !important;
+                                color: #53c797 !important;
+                            }
+                        }
+
+                    }
+
+                    &.action {
+                        display: flex;
+                        align-items: center;
+                        gap: 15px;
+                        padding-right: 20px;
+
+                        svg,
+                        p {
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            width: 35px;
+                            height: 35px;
+                            background-color: red;
+                            padding: 8px;
+                            border-radius: 50%;
+
+                            &.details {
+                                background-color: #396cf01a;
+                                border: 1px solid #396cf01a !important;
+                                box-shadow: 0 3px 5px 0 #396cf04d;
+                                color: #396cf0 !important;
+                                transition: all 0.3s ease-in-out;
+                                cursor: pointer;
+
+                                &:hover {
+                                    background-color: #396cf0;
+                                    color: white !important;
+                                }
+                            }
+
+                            &.approve {
+                                background-color: #53c7971a!important;
+                                border: 1px solid #53c7971a !important;
+                                box-shadow: 0 3px 5px 0 #53c7974d;
+                                color: #53c797 !important;
+                                transition: all 0.3s ease-in-out;
+                                cursor: pointer;
+
+                                &:hover {
+                                    background-color: #48f18c!important;
+                                    color: white !important;
+
+                                    span {
+                                        border: 2px solid white;
+                                    }
+                                }
+                            }
+
+                            &.reject {
+                                background-color: #f0735a1a !important;
+                                border: 1px solid #f0735a1a !important;
+                                box-shadow: 0 3px 5px 0 #f0735a4d;
+                                color: #f0735a !important;
+                                transition: all 0.3s ease-in-out;
+                                cursor: pointer;
+
+                                &:hover {
+                                    color: white!important;
+                                    background-color: #ed9b8a !important;
+                                }
+                            }
+                        }
+
+                        p {
+                            padding: 0;
+
+                            span {
+                                border: 2px solid var(--main-color);
+                                width: 20px;
+                                height: 20px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                border-radius: 50%;
+                                transform: scale(0.6);
+                                padding: 12px;
+                                font-weight: 600;
+                            }
+                        }
+                    }
+                }
+
+                tr {
+                    &:last-child {
+                        border-bottom: none;
+                    }
+                }
+            }
+
+            tr {
+                border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+            }
+        }
+    }
+}

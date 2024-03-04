@@ -1,0 +1,362 @@
+.edit-doctor-profile-section {
+    width: 100%;
+
+    .personal-information {
+        width: 100%;
+
+        .profile-image-container {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+
+            .profile-image-div {
+                text-align: center;
+
+                .image {
+                    width: 200px;
+                    height: 250px;
+                    background-color: rgba(0, 0, 0, 0.1);
+                    border-radius: 5px;
+                    position: relative;
+                    display: flex;
+                    justify-content: center;
+                    overflow: hidden;
+
+                    .actions {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        height: fit-content;
+                        position: absolute;
+                        right: 10px;
+                        gap: 10px;
+                        transition: all 0.5s ease-in-out;
+                        transform: scale(0);
+
+                        svg {
+                            border-radius: 50%;
+                            background-color: rgba(0, 0, 0, 0.8);
+                            padding: 6px;
+                            font-size: 30px;
+                            color: white;
+                            cursor: pointer;
+                            transition: all 0.5s ease;
+
+                            &:hover {
+                                color: var(--main-color);
+                            }
+                        }
+                    }
+
+                    .upload-photo-div {
+                        background-color: rgba(0, 0, 0, 0.8);
+                        position: absolute;
+                        width: 250%;
+                        aspect-ratio: 1/1;
+                        display: flex;
+                        align-items: center;
+                        flex-direction: column;
+                        border-radius: 50%;
+                        top: 100%;
+                        padding-top: 40px;
+                        font-size: 18px;
+                        color: white;
+                        transition: all 0.5s ease-in-out;
+                        cursor: pointer;
+
+                        &:hover {
+                            color: var(--main-color);
+                        }
+
+                        svg {
+                            font-size: 24px;
+                        }
+
+                        input {
+                            display: none;
+                        }
+                    }
+
+                    &:hover {
+                        .actions {
+                            transform: scale(1);
+                        }
+
+                        .upload-photo-div {
+                            top: 50%;
+                        }
+                    }
+                }
+            }
+
+            h3 {
+                color: var(--main-color);
+            }
+
+            .remove-btn {
+                height: 35px;
+                border: none;
+                outline: none;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 50%;
+                border-radius: 3px;
+                font-weight: 500;
+                transition: all 0.3s ease-in-out;
+
+                &:hover {
+                    background-color: rgba(0, 0, 0, 0.2);
+                }
+            }
+
+            .actions {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                justify-content: center;
+                margin: 10px 0;
+
+                button {
+                    height: 35px;
+                    border: none;
+                    outline: none;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 50%;
+                    border-radius: 3px;
+                    font-weight: 500;
+                    transition: all 0.3s ease-in-out;
+
+                    &.save-btn {
+                        background-color: var(--main-color);
+                        color: white;
+
+                        &:hover {
+                            background-color: var(--main-color-dark);
+                        }
+                    }
+
+                    &.cancle-btn {
+                        &:hover {
+                            background-color: rgba(0, 0, 0, 0.1);
+                        }
+                    }
+                }
+            }
+        }
+
+        .is_not_verified{
+            background-color: #fef8e3;
+            width: 100%;
+            height: 50px;
+            border: 1px solid #e5c76e;
+            color: #9f7803;
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+            margin: 50px 0;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            p{
+                display: flex;
+                align-items: center;
+                svg{
+                    font-size: 24px;
+                    margin-right: 10px;
+                }
+            }
+        }
+        .is_verified{
+            background-color: #ecfee3;
+            width: 100%;
+            height: 50px;
+            border: 1px solid #72e56e;
+            color: #039005;
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+            margin: 50px 0;
+            margin-bottom: 30px;
+            border-radius: 5px;
+            p{
+                display: flex;
+                align-items: center;
+                svg{
+                    font-size: 24px;
+                    margin-right: 10px;
+                }
+            }
+        }
+        .doctor-details-container {
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            width: 100%;
+            border-radius: 5px;
+
+            h3 {
+                padding: 30px 20px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+                font-size: 20px;
+            }
+
+            form {
+                width: 100%;
+                display: flex;
+                flex-flow: wrap;
+                padding: 10px 30px;
+                gap: 20px;
+                justify-content: space-between;
+
+                div {
+                    width: 48%;
+                    display: flex;
+                    flex-direction: column;
+
+                    label {
+                        margin-bottom: 2px;
+                    }
+
+                    input {
+                        width: 100%;
+                        height: 40px;
+                        border-radius: 5px;
+                        border: 1px solid rgba(0, 0, 0, 0.3);
+                        padding: 0 10px;
+                        outline: none;
+                        color: rgba(0, 0, 0, 0.7);
+                    }
+
+                    &.bio {
+                        width: 100%;
+
+                        textarea {
+                            border: 1px solid rgba(0, 0, 0, 0.3);
+                            outline: none;
+                            text-align: justify;
+                            color: rgba(0, 0, 0, 0.5);
+                            width: 100%;
+                            min-height: 45px;
+                            margin-bottom: 10px;
+                            padding: 10px;
+                            border-radius: 5px;
+                        }
+
+                        .chars {
+                            font-size: 14px;
+                            color: rgba(0, 0, 0, 0.6);
+
+                            &.exceed {
+                                color: rgb(244, 88, 88);
+                            }
+                        }
+                    }
+
+                    &.working-hours {
+                        .time-field {
+                            width: 100%;
+                            display: flex;
+                            flex-direction: row;
+                            gap: 20px;
+                            align-items: center;
+                            justify-content: ce;
+
+                            input {}
+                        }
+                    }
+                }
+
+                button[type="submit"] {
+                    width: max-content;
+                    padding: 10px 30px;
+                    border: none;
+                    outline: none;
+                    border-radius: 5px;
+                    margin-bottom: 20px;
+                    background-color: var(--main-color);
+                    color: white;
+
+                    &:hover {
+                        background-color: var(--main-color-dark);
+                    }
+                }
+
+                button:disabled {
+                    background-color: rgb(198, 198, 198);
+                    cursor: not-allowed;
+
+                    &:hover {
+                        background-color: rgb(157, 157, 157);
+                    }
+                }
+            }
+        }
+    }
+
+    .change-passowrd-container {
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        margin-top: 40px;
+
+        h3 {
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            font-size: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            padding: 10px 30px;
+
+            input {
+                width: 100%;
+                height: 40px;
+                border-radius: 5px;
+                border: 1px solid rgba(0, 0, 0, 0.3);
+                padding: 0 10px;
+                outline: none;
+                color: rgba(0, 0, 0, 0.7);
+                margin-bottom: 25px;
+            }
+            button[type="submit"]{
+                width: max-content;
+                padding: 7px 30px;
+                margin-bottom: 20px;
+                border-radius: 3px;
+                border: none;
+                outline: none;
+                background-color: var(--main-color);
+                color: white;
+                &:hover{
+                    background-color: var(--main-color-dark);
+                }
+            }
+        }
+    }
+}
+
+.full-image-div {
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1001;
+
+    .image-container {
+        width: 100%;
+        height: 100%;
+    }
+
+    svg {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 40px;
+        color: white;
+        cursor: pointer;
+    }
+}

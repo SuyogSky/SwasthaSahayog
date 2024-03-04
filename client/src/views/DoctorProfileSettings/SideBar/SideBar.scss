@@ -1,0 +1,111 @@
+.doctor-sidebar{
+    border: 1px solid rgba(0,0,0,0.2);
+    width: 350px;
+    max-width: 400px;
+    border-radius: 5px;
+    .top{
+        border-bottom: 1px solid rgba(0,0,0,0.2);
+        height: 230px;
+        .container{
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            background-color: var(--main-color-light);
+            height: 50%;
+            position: relative;
+            .contents{
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-direction: column;
+                position: absolute;
+                top: 40%;
+                .image{
+                    width: 100px;
+                    aspect-ratio: 1/1;
+                    background-color: rgb(226, 226, 226);
+                    border-radius: 50%;
+                    cursor: pointer;
+                    box-shadow: 2px 1px 10px rgba(0,0,0,0.2);
+                }
+                h4{
+                    font-size: 18px;
+                    margin-top: 20px;
+                    margin-bottom: 5px;
+                }
+                p{
+                    font-size: 14px;
+                    color: rgba(0,0,0,0.4);
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+
+    .profile-completion {
+        padding: 20px;
+
+        .number {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+
+            p {
+                font-size: 16px;
+                font-weight: 600;
+            }
+
+            span {
+                font-size: 16px;
+                font-weight: 600;
+                color: rgba(0, 0, 0, 0.3);
+            }
+        }
+
+        .progression-bar {
+            background-color: #e0e0e0;
+            height: 10px;
+            border-radius: 50px;
+            overflow: hidden;
+
+            .progress {
+                height: 100%;
+                background-color: var(--main-color);
+                border-radius: 50px;
+                /* Green color for completed part */
+            }
+        }
+
+    }
+
+    .navigation-menu{
+        padding: 20px;
+        ul{
+            list-style: none;
+            li{
+                margin: 20px 0;
+                a{
+                    color: rgba(0,0,0,0.5);
+                    text-decoration: none;
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 10px;
+                    font-weight: 500;
+                    svg{
+                        font-size: 20px;
+                    }
+                    &:active,
+                    &:focus,
+                    &:hover,
+                    &.active{
+                        color: var(--main-color);
+                    }
+                }
+            }
+        }
+    }
+}

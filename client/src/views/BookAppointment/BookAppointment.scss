@@ -1,0 +1,40 @@
+.book-appointment-section {
+    width: 100%;
+    overflow-x: hidden;
+    .banner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
+        background-color: var(--main-color-light);
+        border-bottom-left-radius: 50% 200px; /* Adjust the second value for the circular effect */
+        border-bottom-right-radius: 50% 200px; /* Adjust the second value for the circular effect */
+        transform: scaleX(1.5);
+        padding: 80px 6%;
+        gap: 100px;
+        padding-top: 250px;
+        .text{
+            text-align: center;
+            h2, p{
+                transform: scaleX(0.7);
+            }
+            h2{
+                margin-bottom: 40px;
+            }
+            p{
+                max-width: 800px;
+            }
+        }
+        svg{
+            font-size: 24px;
+            color: var(--main-color-dark);
+            cursor: pointer;
+        }
+    }
+    .book-appointment-form-container{
+        width: 100%;
+        padding: 80px 6%;
+        text-align: center;
+    }
+}

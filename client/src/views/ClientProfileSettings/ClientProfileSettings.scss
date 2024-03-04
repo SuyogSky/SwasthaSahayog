@@ -1,0 +1,16 @@
+.client-settings-section{
+    padding: 100px 6%;
+    display: flex;
+    gap: 40px;
+    align-items: start;
+    &.p0{
+        padding: 100px 1%;
+    }
+    .left{
+        position: sticky;
+        top: 85px;
+    }
+    .right{
+        width: 100%;
+    }
+}
