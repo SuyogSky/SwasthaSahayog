@@ -44,7 +44,7 @@ function Inbox() {
     }
     useEffect(() => {
         getChats()
-    }, [chatHistory])
+    }, [chatHistory, history])
 
     const getChatHistory = () => {
         try {
@@ -58,7 +58,27 @@ function Inbox() {
     }
     useEffect(() => {
         getChatHistory()
-    }, [id])
+    }, [id, history])
+
+
+
+    const [receiverData, setReceiverData] = useState(null);
+
+    useEffect(() => {
+        // Filter messages based on the id from the URL params
+        const filteredMessages = messages.filter((message) => {
+            const receiverId = message.sender.id === user_id ? message.receiver.id : message.sender.id;
+            return receiverId === parseInt(id, 10);
+        });
+
+        // Use the first message from the filtered messages to set receiver data
+        if (filteredMessages.length > 0) {
+            const receiver = filteredMessages[0].sender.id === user_id ? filteredMessages[0].receiver : filteredMessages[0].sender;
+            setReceiverData(receiver);
+        } else {
+            setReceiverData(null); // Reset receiverData if no matching messages
+        }
+    }, [id, messages, user_id]);
 
     // useEffect(() => {
     //     let interval = setInterval(() => {
@@ -207,11 +227,11 @@ function Inbox() {
             try {
                 axios.get(baseUrl + '/search/' + newSearch + '/')
                     .then((res) => {
-                        if(res.status === 404){
+                        if (res.status === 404) {
                             console.log(res.details)
                             alert('User does not exist.')
                         }
-                        else{
+                        else {
                             history.push('/doctor/search/' + newSearch)
                         }
                     })
@@ -223,6 +243,8 @@ function Inbox() {
             }
         }
     }
+
+    const [receiverUser, setReceiverUser] = useState()
 
     return (
         <div className="chat-main-container">
@@ -236,9 +258,9 @@ function Inbox() {
 
                     {
                         messages.map((message) => {
-                            const id = message.sender.id === user_id ? message.receiver.id : message.sender.id
+                            const reveiverId = message.sender.id === user_id ? message.receiver.id : message.sender.id
                             return (
-                                <Link className="user" to={'/doctor/inbox/' + id}>
+                                <Link className={`user ${id == reveiverId ? 'active' : ''}`} to={'/doctor/inbox/' + reveiverId}>
                                     {message.sender.id === user_id &&
                                         <div className="image" style={message ? {
                                             backgroundImage: `url(${message.receiver.image})`,
@@ -279,11 +301,16 @@ function Inbox() {
             <div className="message-box-container">
                 <div className="top">
                     <div className="user-detail">
-                        <div className="image">
+                        <div className="image" style={receiverData ? {
+                            backgroundImage: `url(${receiverData.image})`,
+                            backgroundPosition: 'center',
+                            backgroundSize: 'cover',
+                            backgroundRepeat: 'no-repeat',
+                        } : null}>
 
                         </div>
                         <div className="details">
-                            <h6>username</h6>
+                            <h6>{receiverData?.username}</h6>
                             <p>online</p>
                         </div>
                     </div>

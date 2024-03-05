@@ -81,8 +81,11 @@
                 border-radius: 5px;
                 text-decoration: none;
                 color: black;
+                margin-bottom: 10px;
                 cursor: pointer;
-
+                &.active{
+                    background-color: rgba(0, 0, 0, 0.05);
+                }
                 &:hover {
                     background-color: rgba(0, 0, 0, 0.05);
                 }
@@ -153,6 +156,27 @@
             align-items: center;
             justify-content: space-between;
             padding: 10px 30px;
+            .user-detail{
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                .image{
+                    width: 45px;
+                    height: 45px;
+                    border-radius: 50%;
+                    background-color: rgba(0,0,0,0.1);
+                }
+                .details{
+                    h6{
+                        margin: 0;
+                        padding: 0;
+                        font-size: 16px;
+                    }
+                    p{
+                        font-size: 12px;
+                    }
+                }
+            }
         }
 
         .inbox {

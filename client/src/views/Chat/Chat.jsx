@@ -52,8 +52,9 @@ function Chat() {
 
                     {
                         messages.map((message) => {
+                            const id = message.sender.id === user_id ? message.receiver.id : message.sender.id
                             return (
-                                <Link className="user" to={'/doctor/inbox/'+message.sender.id}>
+                                <Link className="user" to={'/doctor/inbox/' + id}>
                                     {message.sender.id === user_id &&
                                         <div className="image" style={message ? {
                                             backgroundImage: `url(${message.receiver.image})`,
@@ -81,7 +82,7 @@ function Chat() {
                                             <h6>{message.receiver.username}</h6>
                                         }
 
-                                        <p className='message-display'><span className='message'>{message.message}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
+                                        <p className='message-display'><span className='message'>{message.message ? message.message : message.image ? 'Sent Attachment.' : null}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
                                     </div>
                                 </Link>
                             )
