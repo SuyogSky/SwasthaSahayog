@@ -5,7 +5,7 @@ from accounts.models import BaseUser
 class ChatMessage(models.Model):
     user = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name="user")
     sender = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name="sender")
-    reciever = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name="reciever")
+    receiver = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name="receiver")
 
     message = models.TextField(max_length=1000)
     is_read = models.BooleanField(default=False)
@@ -16,4 +16,4 @@ class ChatMessage(models.Model):
         verbose_name_plural = 'Message'
 
     def __str__(self):
-        return f"{self.sender} - {self.reciever}"
+        return f"{self.sender} - {self.receiver}"

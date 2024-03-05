@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.db.models import Subquery, OuterRef, Q
 from rest_framework import generics, status
 from chat.models import ChatMessage
-from chat.serializer import MessageSerializer
+from chat.serializer import MessageSerializer, SendMessageSerializer
 from accounts.models import BaseUser
 from accounts.serializer import BaseUserSerializer
 from rest_framework.permissions import IsAuthenticated
@@ -18,13 +18,13 @@ class MyInbox(generics.ListAPIView):
         messages = ChatMessage.objects.filter(
             id__in =  Subquery(
                 BaseUser.objects.filter(
-                    Q(sender__reciever=user_id) |
-                    Q(reciever__sender=user_id)
+                    Q(sender__receiver=user_id) |
+                    Q(receiver__sender=user_id)
                 ).distinct().annotate(
                     last_msg=Subquery(
                         ChatMessage.objects.filter(
-                            Q(sender=OuterRef('id'),reciever=user_id) |
-                            Q(reciever=OuterRef('id'),sender=user_id)
+                            Q(sender=OuterRef('id'),receiver=user_id) |
+                            Q(receiver=OuterRef('id'),sender=user_id)
                         ).order_by('-id')[:1].values_list('id',flat=True) 
                     )
                 ).values_list('last_msg', flat=True).order_by("-id")
@@ -39,18 +39,32 @@ class GetMessages(generics.ListAPIView):
 
     def get_queryset(self):
         sender_id = self.kwargs['sender_id']
-        reciever_id = self.kwargs['reciever_id']
+        receiver_id = self.kwargs['receiver_id']
 
         messages = ChatMessage.objects.filter(
-            sender__in=[sender_id, reciever_id],
-            reciever__in=[sender_id, reciever_id]
+            sender__in=[sender_id, receiver_id],
+            receiver__in=[sender_id, receiver_id]
         )
 
         return messages
     
+# class SendMessage(generics.CreateAPIView):
+#     serializer_class = MessageSerializer
+#     # permission_classes = [IsAuthenticated]
+    
 class SendMessage(generics.CreateAPIView):
-    serializer_class = MessageSerializer
-    permission_classes = [IsAuthenticated]
+    serializer_class = SendMessageSerializer
+    def perform_create(self, serializer):
+        user = self.request.data.get('user') 
+        sender = self.request.data.get('sender') 
+        receiver = self.request.data.get('receiver') 
+
+        user_instance = BaseUser.objects.get(id=user) 
+        sender_instance = BaseUser.objects.get(id=sender) 
+        receiver_instance = BaseUser.objects.get(id=receiver) 
+
+        # Associate the message with the user instance
+        serializer.save(user=user_instance, sender=sender_instance, receiver=receiver_instance)
 
 class ProfileDetail(generics.RetrieveAPIView):
     serializer_class = BaseUserSerializer

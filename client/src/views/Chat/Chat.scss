@@ -6,8 +6,11 @@
     min-height: calc(100vh - 120px);
     position: fixed;
     margin-right: 1%;
+    width: calc(100% - 400px - 1%);
+
     .users-list-container {
-        width: 400px;
+        min-width: 400px;
+        max-width: 400px;
         border-right: 1px solid rgba(0, 0, 0, 0.2);
         padding: 20px;
 
@@ -129,6 +132,7 @@
 
     .message-box-container {
         width: 100%;
+        padding-bottom: 10px;
 
         .top {
             border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -142,6 +146,10 @@
             width: 100%;
             padding: 0px 30px;
             max-height: calc(100% - 120px);
+            min-height: calc(100% - 120px);
+            // display: flex;
+            // flex-direction: column;
+            // justify-content: flex-end;
             overflow-y: auto;
 
             &::-webkit-scrollbar {
@@ -174,10 +182,12 @@
 
                     .message-content {
                         background-color: var(--main-color-light-1);
-                        &::before{
+
+                        &::before {
                             right: -8px;
                             background-color: var(--main-color-light-1);
                         }
+
                         span {
                             font-weight: 400;
                         }
@@ -189,7 +199,8 @@
 
                     .message-content {
                         background-color: rgb(243, 243, 243);
-                        &::before{
+
+                        &::before {
                             left: -8px;
                             background-color: rgb(243, 243, 243);
                         }
@@ -252,6 +263,80 @@
     }
 
     .message-input-field {
-        border-top: 1px solid rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 50px;
+        margin: 0 10px 10px 10px;
+        display: flex;
+        align-items: center;
+        height: 48px;
+        gap: 10px;
+        position: relative;
+        .image-display{
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            width: 100%;
+            position: absolute;
+            top: -81px;
+            height: 80px;
+            padding: 20px 15px;
+            box-shadow: 1px 0px 5px rgba(0,0,0,0.1);
+            background-color: white;
+            .image{
+                width: 60px;
+                height: 60px;
+                background-color: rgba(0,0,0,0.08);
+                border-radius: 5px;
+            }
+            .cancle{
+                margin-left: 10px;
+                cursor: pointer;
+                svg{
+                    font-size: 24px;
+                }
+            }
+        }
+
+        input[type="text"] {
+            width: 100%;
+            height: 100%;
+            padding: 0 20px;
+            border: none;
+            outline: none;
+            background: none;
+        }
+        input[type="file"]{
+            display: none;
+        }
+
+        label{
+            margin: 0;
+            padding: 0;
+            svg {
+                font-size: 24px;
+                height: 30px;
+                width: 30px;
+                color: #6e6e6e;
+                margin-right: 10px;
+                cursor: pointer;
+            }
+        }
+
+        button[type="submit"] {
+            border: none;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            cursor: pointer;
+            svg {
+                margin-right: 20px;
+                font-size: 24px;
+                height: 27px;
+                width: 27px;
+                color: #6e6e6e;
+            }
+        }
     }
 }

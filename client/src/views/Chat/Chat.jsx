@@ -56,7 +56,7 @@ function Chat() {
                                 <Link className="user" to={'/doctor/inbox/'+message.sender.id}>
                                     {message.sender.id === user_id &&
                                         <div className="image" style={message ? {
-                                            backgroundImage: `url(${message.reciever.image})`,
+                                            backgroundImage: `url(${message.receiver.image})`,
                                             backgroundPosition: 'center',
                                             backgroundSize: 'cover',
                                             backgroundRepeat: 'no-repeat',
@@ -78,7 +78,7 @@ function Chat() {
                                             <h6>{message.sender.username}</h6>
                                         }
                                         {message.sender.id === user_id &&
-                                            <h6>{message.reciever.username}</h6>
+                                            <h6>{message.receiver.username}</h6>
                                         }
 
                                         <p><span className='message'>{message.message}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>

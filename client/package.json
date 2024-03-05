@@ -18,7 +18,8 @@
     "react-scripts": "5.0.1",
     "sass": "^1.71.1",
     "sweetalert2": "^11.10.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "websocket": "^1.0.34"
   },
   "scripts": {
     "start": "react-scripts start",

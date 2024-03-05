@@ -5,7 +5,14 @@ from accounts.serializer import BaseUserSerializer
 class MessageSerializer(serializers.ModelSerializer):
     user = BaseUserSerializer()
     sender = BaseUserSerializer()
-    reciever = BaseUserSerializer()
+    receiver = BaseUserSerializer()
     class Meta:
         model = ChatMessage
-        fields = ('id', 'user', 'sender', 'reciever', 'message', 'is_read', 'date')
+        fields = ('id', 'user', 'sender', 'receiver', 'message', 'is_read', 'date')
+
+class SendMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChatMessage
+        fields = ('id', 'user', 'sender', 'receiver', 'message', 'is_read', 'date')
+
+

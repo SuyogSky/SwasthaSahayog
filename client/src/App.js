@@ -23,6 +23,7 @@ import ProfileSettings from './views/DoctorProfileSettings/ProfileSettings'
 import ClientProfileSettings from './views/ClientProfileSettings/ClientProfileSettings'
 import BookAppointment from './views/BookAppointment/BookAppointment'
 import Dashboard from './views/DoctorProfileSettings/Dashboard/Dashboard'
+import ChatComponent from './Components/ChatComponent'
 
 function App() {
   // const { user } = useContext(AuthContext)
@@ -48,6 +49,7 @@ function App() {
           <Route component={LoginPage} path="/login" />
           <Route component={RegisterPage} path="/register" />
           <Route component={RegisterDoctor} path="/register-doctor" />
+          <Route component={ChatComponent} path="/test-chat" />
 
           <PrivateRoute component={Doctors} path='/doctors' />
           <PrivateRoute component={ProfileSettings} path='/doctor' />
