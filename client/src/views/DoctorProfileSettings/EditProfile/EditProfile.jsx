@@ -7,11 +7,13 @@ import { PiWarningCircleFill } from "react-icons/pi";
 import { FcApproval } from "react-icons/fc";
 import './EditProfile.scss'
 import ip from '../../../ip';
-import axios from 'axios';
+import useAxios from '../../../utils/useAxios';
 
 
 const swal = require('sweetalert2')
 function EditDoctorProfile({ doctorData, fetchDoctorData }) {
+
+  const axios = useAxios()
   // const [currentUser, setCurrentUser] = useState(JSON.parse(sessionStorage.getItem('currentUser')))
   // const [doctorData, setDoctorData] = useState(true)
   // const fetchDoctorData = async () => {

@@ -32,7 +32,11 @@
                 font-size: 24px;
                 color: rgba(0, 0, 0, 0.5);
             }
-
+            button{
+                background: none;
+                outline: none;
+                border: none;
+            }
             input {
                 background: none;
                 width: 100%;
@@ -100,7 +104,7 @@
                         margin-bottom: 5px;
                     }
 
-                    p {
+                    .message-display {
                         color: rgba(0, 0, 0, 0.5);
                         font-size: 14px;
                         font-weight: 400;
@@ -124,6 +128,15 @@
                             padding: 0 6px;
                             border-radius: 5px;
                         }
+                    }
+                }
+            }
+            &.found-users{
+                p{
+                    color: rgba(0,0,0,0.5);
+                    font-weight: 300;
+                    svg{
+                        margin-right: 10px;
                     }
                 }
             }
@@ -180,16 +193,20 @@
                     justify-content: flex-start;
                     flex-direction: row-reverse;
 
-                    .message-content {
-                        background-color: var(--main-color-light-1);
+                    .message-container {
+                        justify-content: flex-end;
+                        align-items: flex-end;
 
-                        &::before {
-                            right: -8px;
+                        .message-content {
                             background-color: var(--main-color-light-1);
-                        }
+                            svg {
+                                right: -35px;
+                                color: var(--main-color-light-1);
+                            }
 
-                        span {
-                            font-weight: 400;
+                            span {
+                                font-weight: 400;
+                            }
                         }
                     }
                 }
@@ -197,12 +214,15 @@
                 &.recieved {
                     justify-content: flex-start;
 
-                    .message-content {
-                        background-color: rgb(243, 243, 243);
-
-                        &::before {
-                            left: -8px;
+                    .message-container {
+                        .message-content {
                             background-color: rgb(243, 243, 243);
+
+                            svg {
+                                transform: scaley(0.8) rotate(180deg);
+                                color: rgb(243, 243, 243);
+                                left: -34px;
+                            }
                         }
                     }
                 }
@@ -227,35 +247,52 @@
                     }
                 }
 
-                .message-content {
-                    height: 100%;
+                .message-container {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
                     max-width: 70%;
-                    border-radius: 5px;
-                    padding: 10px 20px;
-                    position: relative;
+                    .message-content {
+                        height: 100%;
+                        // max-width: 70%;
+                        border-radius: 5px;
+                        padding: 10px 20px;
+                        position: relative;
+                        svg{
+                            position: absolute;
+                            font-size: 60px;
+                            top: -5px;
+                            transform: scaley(0.8);
+                            color: var(--main-color-light-1);
+                        }
+                        // &::before {
+                        //     position: absolute;
+                        //     content: '';
+                        //     display: inline-block;
+                        //     width: 30px;
+                        //     height: 30px;
+                        //     transform: rotate(45deg);
+                        //     z-index: -1;
+                        // }
 
-                    &::before {
-                        position: absolute;
-                        content: '';
-                        display: inline-block;
-                        width: 30px;
-                        height: 30px;
-                        transform: rotate(45deg);
-                        z-index: -1;
+                        p {
+                            font-size: 15px;
+                            font-weight: 600;
+                        }
+
+                        span {
+                            font-size: 14px;
+                            color: rgba(0, 0, 0, 0.7);
+                            display: inline-block;
+                            line-height: 1.5;
+                            font-weight: 300;
+                            margin-top: 6px;
+                        }
                     }
 
-                    p {
-                        font-size: 15px;
-                        font-weight: 600;
-                    }
-
-                    span {
-                        font-size: 14px;
-                        color: rgba(0, 0, 0, 0.7);
-                        display: inline-block;
-                        line-height: 1.5;
-                        font-weight: 300;
-                        margin-top: 10px;
+                    img {
+                        width: 250px;
+                        border-radius: 8px;
                     }
                 }
             }
@@ -271,7 +308,8 @@
         height: 48px;
         gap: 10px;
         position: relative;
-        .image-display{
+
+        .image-display {
             display: flex;
             align-items: center;
             gap: 20px;
@@ -280,18 +318,21 @@
             top: -81px;
             height: 80px;
             padding: 20px 15px;
-            box-shadow: 1px 0px 5px rgba(0,0,0,0.1);
+            box-shadow: 1px 0px 5px rgba(0, 0, 0, 0.1);
             background-color: white;
-            .image{
+
+            .image {
                 width: 60px;
                 height: 60px;
-                background-color: rgba(0,0,0,0.08);
+                background-color: rgba(0, 0, 0, 0.08);
                 border-radius: 5px;
             }
-            .cancle{
+
+            .cancle {
                 margin-left: 10px;
                 cursor: pointer;
-                svg{
+
+                svg {
                     font-size: 24px;
                 }
             }
@@ -305,13 +346,15 @@
             outline: none;
             background: none;
         }
-        input[type="file"]{
+
+        input[type="file"] {
             display: none;
         }
 
-        label{
+        label {
             margin: 0;
             padding: 0;
+
             svg {
                 font-size: 24px;
                 height: 30px;
@@ -330,6 +373,7 @@
             justify-content: center;
             background: none;
             cursor: pointer;
+
             svg {
                 margin-right: 20px;
                 font-size: 24px;

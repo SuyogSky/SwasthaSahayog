@@ -81,7 +81,7 @@ function Chat() {
                                             <h6>{message.receiver.username}</h6>
                                         }
 
-                                        <p><span className='message'>{message.message}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
+                                        <p className='message-display'><span className='message'>{message.message}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
                                     </div>
                                 </Link>
                             )

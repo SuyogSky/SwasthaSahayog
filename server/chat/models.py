@@ -7,7 +7,8 @@ class ChatMessage(models.Model):
     sender = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name="sender")
     receiver = models.ForeignKey(BaseUser, on_delete=models.CASCADE, related_name="receiver")
 
-    message = models.TextField(max_length=1000)
+    image = models.ImageField(upload_to='message_images', null=True, blank=True)
+    message = models.TextField(max_length=1000, null=True, blank=True)
     is_read = models.BooleanField(default=False)
     date = models.DateTimeField(auto_now_add=True)
 

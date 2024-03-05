@@ -9,6 +9,7 @@ import ip from '../../ip'
 import ViewAppointments from './ViewAppointments/ViewAppointments'
 import Chat from '../Chat/Chat'
 import Inbox from '../Chat/Inbox/Inbox'
+import SearchUser from '../Chat/SearchUser/SearchUser'
 
 function ProfileSettings() {
 
@@ -68,6 +69,7 @@ function ProfileSettings() {
 
                     <PrivateRoute path='/doctor/chat' component={Chat} />
                     <PrivateRoute path='/doctor/inbox/:id' component={Inbox} />
+                    <PrivateRoute path='/doctor/search/:username' component={SearchUser} />
                 </Switch>
             </div>
         </section>

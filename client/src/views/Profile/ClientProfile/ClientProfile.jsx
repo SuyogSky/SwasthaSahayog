@@ -11,12 +11,12 @@ import { BiEdit } from "react-icons/bi";
 import { CiSaveUp2 } from "react-icons/ci";
 import { RxCross2 } from "react-icons/rx";
 import { AiFillVideoCamera, AiOutlineCloudUpload } from "react-icons/ai";
-import axios from 'axios'
 import AuthContext from "../../../context/AuthContext";
 import { BsExclamationCircleFill } from "react-icons/bs";
 import { IoEyeOutline } from "react-icons/io5";
 import { RiFullscreenFill } from "react-icons/ri";
 import Loading from "../../Loading/Loading";
+import useAxios from "../../../utils/useAxios";
 
 const swal = require('sweetalert2')
 const truncateWords = (text, numWords) => {
@@ -25,7 +25,7 @@ const truncateWords = (text, numWords) => {
 };
 
 const ClientProfile = ({ id }) => {
-
+    const axios = useAxios()
 
     let { user } = useContext(AuthContext)
 

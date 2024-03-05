@@ -3,10 +3,12 @@ import './ViewAppointment.scss'
 import { IoEyeOutline } from "react-icons/io5";
 import { RxCrossCircled } from "react-icons/rx";
 import ip from '../../../ip';
-import axios from 'axios'
+import useAxios from '../../../utils/useAxios';
 const swal = require('sweetalert2')
 
 function ViewAppointments() {
+    const axios = useAxios()
+
 
     const [appointments, setAppointments] = useState([]);
     const [allAppointments, setAllAppointments] = useState([]);

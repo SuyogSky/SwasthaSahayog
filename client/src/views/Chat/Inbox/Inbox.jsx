@@ -10,7 +10,12 @@ import { useParams, Link } from 'react-router-dom';
 import { IoImageOutline } from "react-icons/io5";
 import { BsSend } from "react-icons/bs";
 import { RxCross2 } from "react-icons/rx";
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { MdOutlineArrowRight } from "react-icons/md";
 function Inbox() {
+    const history = useHistory()
+
+
     const baseUrl = `${ip}/chat`
     const [messages, setMessages] = useState([])
 
@@ -21,7 +26,13 @@ function Inbox() {
     const decoded = jwtDecode(token)
     const user_id = decoded.user_id
 
-    useEffect(() => {
+
+
+    // ========== For Message Details ==========
+    const [message, setMessage] = useState()
+    const [chatHistory, setChatHistory] = useState([]);
+    const [newSearch, setNewSearch] = useState('')
+    const getChats = () => {
         try {
             axios.get(baseUrl + '/my-messages/' + user_id + '/').then((res) => {
                 console.log(res)
@@ -30,13 +41,10 @@ function Inbox() {
         } catch (error) {
             console.log(error)
         }
-    }, [])
-
-
-
-    // ========== For Message Details ==========
-    const [message, setMessage] = useState()
-    const [chatHistory, setChatHistory] = useState([]);
+    }
+    useEffect(() => {
+        getChats()
+    }, [chatHistory])
 
     const getChatHistory = () => {
         try {
@@ -92,7 +100,7 @@ function Inbox() {
     // }, []);
 
 
-    const [text, setText] = useState()
+    const [text, setText] = useState('')
 
     const sendMessage = (e) => {
         e.preventDefault()
@@ -100,6 +108,9 @@ function Inbox() {
         formData.append("user", user_id)
         formData.append("sender", user_id)
         formData.append("receiver", id)
+        if (image !== null && image != '') {
+            formData.append("image", image)
+        }
         formData.append("message", text)
         formData.append("is_read", false)
 
@@ -107,6 +118,8 @@ function Inbox() {
             axios.post(baseUrl + '/send-messages/', formData).then((res) => {
                 console.log(res.data)
                 setText('')
+                setImage(null)
+                setDisplayImage(null)
                 getChatHistory()
             })
         } catch (error) {
@@ -188,14 +201,37 @@ function Inbox() {
         setImage(null)
     }
 
+    const handleSearch = (e) => {
+        e.preventDefault()
+        if (newSearch.length > 0) {
+            try {
+                axios.get(baseUrl + '/search/' + newSearch + '/')
+                    .then((res) => {
+                        if(res.status === 404){
+                            console.log(res.details)
+                            alert('User does not exist.')
+                        }
+                        else{
+                            history.push('/doctor/search/' + newSearch)
+                        }
+                    })
+                    .catch((error) => {
+                        console.log('No user found')
+                    })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
+
     return (
         <div className="chat-main-container">
             <div className="users-list-container">
                 <h4>Chats</h4>
-                <div className="search-bar">
-                    <IoSearch />
-                    <input type="text" placeholder='Search Chat' />
-                </div>
+                <form className="search-bar" onSubmit={handleSearch}>
+                    <button type="submit"><IoSearch /></button>
+                    <input type="text" placeholder='Search Chat' onChange={(e) => setNewSearch(e.target.value)} />
+                </form>
                 <div className="users">
 
                     {
@@ -230,7 +266,7 @@ function Inbox() {
                                             <h6>{message.receiver.username}</h6>
                                         }
 
-                                        <p><span className='message'>{message.message}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
+                                        <p className='message-display'><span className='message'>{message.message ? message.message : message.image ? 'Sent Attachment.' : null}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
                                     </div>
                                 </Link>
                             )
@@ -290,9 +326,15 @@ function Inbox() {
                                             </div>
                                             <span>2:22 pm</span>
                                         </div>
-                                        <div className="message-content">
-                                            <p>You</p>
-                                            <span>{message.message}</span>
+                                        <div className="message-container">
+                                            {message.message && (
+                                                <div className="message-content">
+                                                    <MdOutlineArrowRight />
+                                                    <p>You</p>
+                                                    <span>{message.message}</span>
+                                                </div>
+                                            )}
+                                            {message.image && <img src={message.image} alt="image" />}
                                         </div>
                                     </div>
                                 }
@@ -309,9 +351,15 @@ function Inbox() {
                                             </div>
                                             <span>2:22 pm</span>
                                         </div>
-                                        <div className="message-content">
-                                            <p>{message.sender.username}</p>
-                                            <span>{message.message}</span>
+                                        <div className="message-container">
+                                            {message.message && (
+                                                <div className="message-content">
+                                                    <MdOutlineArrowRight />
+                                                    <p>{message.sender.username}</p>
+                                                    <span>{message.message}</span>
+                                                </div>
+                                            )}
+                                            {message.image && <img src={message.image} alt="image" />}
                                         </div>
                                     </div>
                                 }
@@ -321,7 +369,7 @@ function Inbox() {
                 </div>
 
                 <form className="message-input-field" onSubmit={sendMessage}>
-                    {displayImage!==null && (
+                    {displayImage !== null && (
                         <div className="image-display">
                             <div className="image" style={{
                                 backgroundImage: `url(${displayImage})`,

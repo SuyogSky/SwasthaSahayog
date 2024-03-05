@@ -8,11 +8,12 @@ import { IoFemale } from "react-icons/io5";
 import { BsGenderNeuter } from "react-icons/bs";
 import './EditClientProfile.scss'
 import ip from '../../../ip';
-import axios from 'axios';
+import useAxios from '../../../utils/useAxios';
 
 
 const swal = require('sweetalert2')
 function EditClientProfile({ clientData, fetchClientData }) {
+    const axios = useAxios()
     // const [currentUser, setCurrentUser] = useState(JSON.parse(sessionStorage.getItem('currentUser')))
     // const [clientData, setDoctorData] = useState(true)
     // const fetchClientData = async () => {
