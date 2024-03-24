@@ -7,6 +7,9 @@ from accounts.models import BaseUser
 from accounts.serializer import BaseUserSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from django.http import JsonResponse
+from django.views import View
+from rest_framework.views import APIView
 
 # Create your views here.
 class MyInbox(generics.ListAPIView):
@@ -32,6 +35,20 @@ class MyInbox(generics.ListAPIView):
         ).order_by("-id")
             
         return messages
+    
+class MarkMessagesAsReadView(APIView):
+    def post(self, request, *args, **kwargs):
+        sender_id = self.kwargs.get('sender_id')
+        receiver_id = self.kwargs.get('receiver_id')
+
+        # Mark messages as read
+        ChatMessage.objects.filter(
+            sender__in=[sender_id, receiver_id],
+            receiver__in=[sender_id, receiver_id],
+            is_read=False
+        ).update(is_read=True)
+
+        return Response({'status': 'success'}, status=status.HTTP_200_OK)
     
 class GetMessages(generics.ListAPIView):
     serializer_class = MessageSerializer

@@ -28,35 +28,37 @@ const ClientProfile = ({ id }) => {
     const axios = useAxios()
 
     let { user } = useContext(AuthContext)
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'))
 
     const [isCurrentUser, setIsCurrentUser] = useState()
 
     const [loading, setLoading] = useState(false)
     // Fetch client details from the backend API using the client ID
     const fetchClientData = () => {
-        fetch(`${ip}/api/profile/${id}/`, {
-            method: 'GET',
+        const config = {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            }
-        })
-            .then(response => response.json())
-            .then(data => {
-                setClientData(data)
-                setBioText(data.bio || 'Not Set')
-                setProfilePicture(data.image || null)
-                console.log("This is profiles data: ", data)
-                console.log("This is current user data: ", user)
-                console.log('is same: ', user)
-                setIsCurrentUser(localStorage.getItem('currentUser') == data.email)
-                setFormUserName(data.username)
-                setFormPhone(data.phone)
-                setFormAddress(data.address)
-                setFormDOB(data.date_of_birth)
+            },
+        };
+
+        axios.get(`${ip}/api/client-profile/${id}/`, config)
+            .then(response => {
+                const data = response.data;
+                setClientData(data);
+                setBioText(data.bio || 'Not Set');
+                setProfilePicture(data.image || null);
+                console.log("This is profiles data: ", data);
+                console.log("This is current user data: ", user);
+                console.log('is same: ', user);
+                setIsCurrentUser(currentUser.email === data.email);
+                setFormUserName(data.username);
+                setFormPhone(data.phone);
+                setFormAddress(data.address);
+                setFormDOB(data.date_of_birth);
             })
             .catch(error => console.error('Error fetching client details:', error));
-    }
+    };
     const [clientData, setClientData] = useState(null);
     useEffect(() => {
         fetchClientData()
@@ -141,25 +143,24 @@ const ClientProfile = ({ id }) => {
 
     const [posts, setPosts] = useState([]);
     const fetchUserPosts = async () => {
-        setLoading(true)
+        setLoading(true);
+
         try {
-            const response = await fetch(`${ip}/forum/user-posts/${id}`, {
-                method: 'GET',
+            const response = await axios.get(`${ip}/forum/user-posts/${id}`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    // Add any authentication headers if needed
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
             });
 
-            if (!response.ok) {
+            if (!response.status === 200) {
                 throw new Error(`Failed to fetch posts: ${response.statusText}`);
             }
 
-            const data = await response.json();
+            const data = response.data;
             setPosts(data);
             setLoading(false);
-            console.log("The posts are: ", data)
+            console.log('The posts are: ', data);
         } catch (error) {
             console.error('Error fetching posts:', error);
             // Handle error state as needed
@@ -209,51 +210,55 @@ const ClientProfile = ({ id }) => {
     };
 
     const handleAddPost = async (e) => {
-        e.preventDefault()
-        console.log(value, image)
-        console.log(localStorage.getItem('token'))
+        e.preventDefault();
+        console.log(value, image);
+        console.log(localStorage.getItem('token'));
+
         // Prepare the data to be sent to the server
         const postData = new FormData();
         postData.append('content', value);
         postData.append('image', image);
-        console.log(postData)
+
+        console.log(postData);
+
         try {
-            const response = await fetch(`${ip}/forum/posts/`, {
-                method: 'POST',
+            const response = await axios.post(`${ip}/forum/posts/`, postData, {
                 headers: {
                     // 'Content-Type': 'application/json',  // Remove this line when using FormData
-                    'Authorization': `Bearer ${localStorage.getItem("token")}`,
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
-                body: postData,
             });
 
-            if (response.ok) {
-                const responseData = await response.json();
+            if (response.status === 200) {
+                const responseData = response.data;
                 console.log('Post added successfully:', responseData);
+
                 swal.fire({
-                    title: "Post Uploaded Successfully.",
-                    icon: "success",
+                    title: 'Post Uploaded Successfully.',
+                    icon: 'success',
                     toast: true,
                     timer: 3000,
-                    position: "top-right",
+                    position: 'top-right',
                     timerProgressBar: true,
                     showConfirmButton: false,
                     showCloseButton: true,
                 });
-                setValue('')
-                setImage('')
-                setImagePreview('')
-                fetchUserPosts()
-                setViewPostForm(false)
+
+                setValue('');
+                setImage('');
+                setImagePreview('');
+                fetchUserPosts();
+                setViewPostForm(false);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 console.error('Error adding post:', response.statusText);
+
                 swal.fire({
-                    title: "Please add some content description.",
-                    icon: "warning",
+                    title: 'Please add some content description.',
+                    icon: 'warning',
                     toast: true,
                     timer: 3000,
-                    position: "top-right",
+                    position: 'top-right',
                     timerProgressBar: true,
                     showConfirmButton: false,
                     showCloseButton: true,
@@ -266,32 +271,31 @@ const ClientProfile = ({ id }) => {
 
     const handleDeletePost = async (postId) => {
         swal.fire({
-            title: "Are you sure?",
+            title: 'Are you sure?',
             text: "You won't be able to revert this!",
-            icon: "warning",
+            icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!',
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch(`${ip}/forum/post/${postId}`, {
-                        method: 'DELETE',
+                    const response = await axios.delete(`${ip}/forum/post/${postId}`, {
                         headers: {
-                            'Authorization': `Bearer ${localStorage.getItem("token")}`, // Include your authentication token if needed
+                            'Authorization': `Bearer ${localStorage.getItem('token')}`, // Include your authentication token if needed
                             'Content-Type': 'application/json',
                         },
                     });
 
-                    if (response.ok) {
+                    if (response.status === 200) {
                         console.log('Post deleted successfully');
                         swal.fire({
-                            title: "Deleted!",
-                            text: "Your post has been deleted.",
-                            icon: "success"
+                            title: 'Deleted!',
+                            text: 'Your post has been deleted.',
+                            icon: 'success',
                         });
-                        fetchUserPosts()
+                        fetchUserPosts();
                         // Optionally, you can perform additional actions after successful deletion
                     } else {
                         console.error('Error deleting post:', response.statusText);

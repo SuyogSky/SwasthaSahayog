@@ -39,7 +39,6 @@ export const AuthProvider = ({ children }) => {
             })
         })
         const data = await response.json()
-        console.log(data);
 
         if (response.status === 200) {
             console.log("Logged In");
@@ -77,41 +76,93 @@ export const AuthProvider = ({ children }) => {
     }
 
     const registerUser = async (email, username, phone, address, password, password2) => {
-        try {
-            const response = await fetch(`${ip}/api/register/client`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email,
-                    username,
-                    phone,
-                    address,
-                    password,
-                    password2,
-                }),
+        if (phone.length !== 10) {
+            swal.fire({
+                title: "Please enter a valid phone number.",
+                icon: "warning",
+                toast: true,
+                timer: 6000,
+                position: "top-right",
+                timerProgressBar: true,
+                showConfirmButton: false,
+                showCloseButton: true,
             });
-
-            if (response.status === 201) {
-                history.push("/login");
-                swal.fire({
-                    title: "Registration Successful, Login Now",
-                    icon: "success",
-                    toast: true,
-                    timer: 6000,
-                    position: "top-right",
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                    showCloseButton: true,
+        }
+        else if (password === password2) {
+            try {
+                const response = await fetch(`${ip}/api/register/client`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email,
+                        username,
+                        phone,
+                        address,
+                        password,
+                        password2,
+                    }),
                 });
-            } else {
-                const errorData = await response.json(); // Parse error response
-                console.log(response.status);
-                console.log("Server error:", errorData);
+
+                if (response.status === 201) {
+                    history.push("/login");
+                    swal.fire({
+                        title: "Registration Successful, Login Now",
+                        icon: "success",
+                        toast: true,
+                        timer: 6000,
+                        position: "top-right",
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    });
+                } else {
+                    const errorData = await response.json(); // Parse error response
+                    console.log(response.status);
+                    console.log("Server error:", errorData);
+                    if (errorData.email) {
+                        swal.fire({
+                            title: "User with this email already exixts.",
+                            icon: "error",
+                            toast: true,
+                            timer: 6000,
+                            position: "top-right",
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                        });
+                    }
+                    else if (errorData.password) {
+                        swal.fire({
+                            title: "Please choose stronger password.",
+                            icon: "warning",
+                            toast: true,
+                            timer: 6000,
+                            position: "top-right",
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                        });
+                    }
+                    else {
+                        swal.fire({
+                            title: "Registration Failed",
+                            text: errorData.detail,
+                            icon: "error",
+                            toast: true,
+                            timer: 6000,
+                            position: "top-right",
+                            timerProgressBar: true,
+                            showConfirmButton: false,
+                            showCloseButton: true,
+                        });
+                    }
+                }
+            } catch (error) {
+                console.error("Error during registration:", error);
                 swal.fire({
-                    title: "Registration Failed",
-                    text: errorData.detail || "An error occurred during registration",
+                    title: "An unexpected error occurred",
                     icon: "error",
                     toast: true,
                     timer: 6000,
@@ -121,11 +172,11 @@ export const AuthProvider = ({ children }) => {
                     showCloseButton: true,
                 });
             }
-        } catch (error) {
-            console.error("Error during registration:", error);
+        }
+        else {
             swal.fire({
-                title: "An unexpected error occurred",
-                icon: "error",
+                title: "Password fields didn't matched.",
+                icon: "warning",
                 toast: true,
                 timer: 6000,
                 position: "top-right",
@@ -145,13 +196,13 @@ export const AuthProvider = ({ children }) => {
         formData.append('medical_license', medical_license);
         formData.append('password', password);
         formData.append('password2', password2);
-    
+
         try {
             const response = await fetch(`${ip}/api/register/doctor`, {
                 method: "POST",
                 body: formData,  // No need to set Content-Type
             });
-    
+
             if (response.status === 201) {
                 history.push("/login");
                 swal.fire({
@@ -168,17 +219,43 @@ export const AuthProvider = ({ children }) => {
                 const errorData = await response.json(); // Parse error response
                 console.log(response.status);
                 console.log("Server error:", errorData);
-                swal.fire({
-                    title: "Registration Failed",
-                    text: errorData.detail || "An error occurred during registration",
-                    icon: "error",
-                    toast: true,
-                    timer: 6000,
-                    position: "top-right",
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                    showCloseButton: true,
-                });
+                if (errorData.email) {
+                    swal.fire({
+                        title: "User with this email already exixts.",
+                        icon: "error",
+                        toast: true,
+                        timer: 6000,
+                        position: "top-right",
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    });
+                }
+                else if (errorData.password) {
+                    swal.fire({
+                        title: "Please choose stronger password.",
+                        icon: "warning",
+                        toast: true,
+                        timer: 6000,
+                        position: "top-right",
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    });
+                }
+                else {
+                    swal.fire({
+                        title: "Registration Failed",
+                        text: errorData.detail,
+                        icon: "error",
+                        toast: true,
+                        timer: 6000,
+                        position: "top-right",
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    });
+                }
             }
         } catch (error) {
             console.error("Error during registration:", error);
@@ -194,7 +271,7 @@ export const AuthProvider = ({ children }) => {
             });
         }
     };
-    
+
 
 
     const logoutUser = () => {
@@ -230,6 +307,7 @@ export const AuthProvider = ({ children }) => {
         if (authTokens) {
             setUser(jwtDecode(authTokens.access))
             sessionStorage.setItem('currentUser', JSON.stringify(jwtDecode(authTokens.access)))
+            localStorage.setItem('currentUser', JSON.stringify(jwtDecode(authTokens.access)))
         }
         setLoading(false)
     }, [authTokens, loading])

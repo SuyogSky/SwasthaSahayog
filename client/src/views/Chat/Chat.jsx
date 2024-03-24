@@ -5,8 +5,9 @@ import useAxios from '../../utils/useAxios'
 import { jwtDecode } from 'jwt-decode';
 import ip from '../../ip';
 import moment from 'moment'
-import { Link } from 'react-router-dom/cjs/react-router-dom.min';
+import { Link, useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 function Chat() {
+    const history = useHistory()
     const baseUrl = `${ip}/chat`
 
     const [messages, setMessages] = useState([])
@@ -39,22 +40,45 @@ function Chat() {
     //         console.log(error)
     //     }
     // })
+    const [newSearch, setNewSearch] = useState('')
 
+    const handleSearch = (e) => {
+        e.preventDefault()
+        if (newSearch.length > 0) {
+            try {
+                axios.get(baseUrl + '/search/' + newSearch + '/')
+                    .then((res) => {
+                        if (res.status === 404) {
+                            console.log(res.details)
+                            alert('User does not exist.')
+                        }
+                        else {
+                            history.push('/doctor/search/' + newSearch)
+                        }
+                    })
+                    .catch((error) => {
+                        console.log('No user found')
+                    })
+            } catch (error) {
+                console.log(error)
+            }
+        }
+    }
     return (
         <div className="chat-main-container">
             <div className="users-list-container">
                 <h4>Chats</h4>
-                <div className="search-bar">
-                    <IoSearch />
-                    <input type="text" placeholder='Search Chat' />
-                </div>
+                <form className="search-bar" onSubmit={handleSearch}>
+                    <button type="submit"><IoSearch /></button>
+                    <input type="text" placeholder='Search Chat' onChange={(e) => setNewSearch(e.target.value)} />
+                </form>
                 <div className="users">
 
                     {
                         messages.map((message) => {
                             const id = message.sender.id === user_id ? message.receiver.id : message.sender.id
                             return (
-                                <Link className="user" to={'/doctor/inbox/' + id}>
+                                <Link className="user" to={'/' + decoded.role + '/inbox/' + id}>
                                     {message.sender.id === user_id &&
                                         <div className="image" style={message ? {
                                             backgroundImage: `url(${message.receiver.image})`,
@@ -74,7 +98,7 @@ function Chat() {
                                         } : null}>
                                         </div>
                                     }
-                                    <div className="user-details">
+                                    <div className={`user-details ${(message.sender.id !== user_id && !message.is_read) && 'unread'}`}>
                                         {message.sender.id !== user_id &&
                                             <h6>{message.sender.username}</h6>
                                         }
@@ -82,7 +106,7 @@ function Chat() {
                                             <h6>{message.receiver.username}</h6>
                                         }
 
-                                        <p className='message-display'><span className='message'>{message.message ? message.message : message.image ? 'Sent Attachment.' : null}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
+                                        <p className='message-display'><span className='message'>{message.sender.id === user_id && 'You: '}{message.message ? message.message : message.image ? 'Sent Attachment.' : null}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
                                     </div>
                                 </Link>
                             )
@@ -92,7 +116,7 @@ function Chat() {
                 </div>
             </div>
             <div className="message-box-container">
-                
+
             </div>
         </div>
     )

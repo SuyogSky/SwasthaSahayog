@@ -8,7 +8,7 @@ import { FcApproval } from "react-icons/fc";
 import './EditProfile.scss'
 import ip from '../../../ip';
 import useAxios from '../../../utils/useAxios';
-
+import { LuInfo } from "react-icons/lu";
 
 const swal = require('sweetalert2')
 function EditDoctorProfile({ doctorData, fetchDoctorData }) {
@@ -36,6 +36,7 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
     if (doctorData) {
       // fetchDoctorData()
       setProfilePicture(doctorData.image)
+      setLicenseDisplay(doctorData.medical_license)
       setUserName(doctorData.username)
       setEmail(doctorData.email)
       setPhone(doctorData.phone)
@@ -43,7 +44,11 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
       setOpeningTime(doctorData.opening_time)
       setClosingTime(doctorData.closing_time)
       setSpeciality(doctorData.speciality)
-      setBioText(doctorData.bio || 'NotSet')
+      setBioText(doctorData.bio || '')
+      setMedicalBackgroundText(doctorData.medical_background || '')
+      setAppointmentDuration(doctorData.appointment_duration)
+      setServiceCharge(doctorData.service_charge)
+      setHomeCheckupService(doctorData.home_checkup_service)
     }
   }, [doctorData])
 
@@ -136,7 +141,6 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
   };
 
 
-
   // <----------To Edit Personal Details---------->
   const [userName, setUserName] = useState(doctorData.username)
   const [email, setEmail] = useState(doctorData.email)
@@ -145,21 +149,37 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
   const [openingTime, setOpeningTime] = useState(doctorData.opening_time)
   const [closingTime, setClosingTime] = useState(doctorData.closing_time)
   const [speciality, setSpeciality] = useState(doctorData.speciality)
-  const [bioText, setBioText] = useState(doctorData?.bio || 'Not Set'); // Initialize with an empty string if doctorData or bio is undefined
+  const [bioText, setBioText] = useState(doctorData?.bio || ''); // Initialize with an empty string if doctorData or bio is undefined
+  const [medicalBackgroundText, setMedicalBackgroundText] = useState(doctorData?.medical_background || ''); // Initialize with an empty string if doctorData or bio is undefined
+  const [homeCheckupService, setHomeCheckupService] = useState(doctorData?.home_checkup_service)
+  const [medicalLicense, setMedicalLicense] = useState()
+
+  const [appointmentDuration, setAppointmentDuration] = useState(doctorData?.appointment_duration)
+  const [serviceCharge, setServiceCharge] = useState(doctorData?.service_charge)
 
 
   const textareaRef = useRef(null);
+  const medicalBackgroundRef = useRef(null);
   const maxCharacters = 200;
+  const maxMBCharacters = 300;
   const [isEditing, setEditing] = useState(false);
+  const [isMBEditing, setMBEditing] = useState(false);
 
   const [disableSave, setDisableSave] = useState(false);
+  const [disableUpdate, setDisableUpdate] = useState(false);
   useEffect(() => {
     if (textareaRef.current) {
       const newHeight = textareaRef.current.scrollHeight + 'px';
       textareaRef.current.style.height = newHeight;
     }
     setDisableSave(bioText.length > maxCharacters);
-  }, [bioText, isEditing, doctorData]);
+
+    if (medicalBackgroundRef.current) {
+      const newHeight = medicalBackgroundRef.current.scrollHeight + 'px';
+      medicalBackgroundRef.current.style.height = newHeight;
+    }
+    setDisableUpdate(medicalBackgroundText.length > maxMBCharacters);
+  }, [medicalBackgroundText, isMBEditing, doctorData]);
 
   const handleTextareaChange = (e) => {
     setBioText(e.target.value);
@@ -168,9 +188,18 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
     e.target.style.height = newHeight;
   };
 
+  const handleMedicalBackgroundChange = (e) => {
+    setMedicalBackgroundText(e.target.value);
+    setMBEditing(true)
+    const newHeight = e.target.scrollHeight + 'px';
+    e.target.style.height = newHeight;
+  };
+
   const updateProfileDetails = async (e) => {
     e.preventDefault();
     // Send a PATCH request to update specific fields of the profile
+    console.log(appointmentDuration)
+    console.log(serviceCharge)
     try {
       await axios.patch(`${ip}/api/edit-doctor-profile/${doctorData.id}/`, {
         username: userName,
@@ -179,6 +208,8 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
         address: address,
         opening_time: openingTime,
         closing_time: closingTime,
+        appointment_duration: appointmentDuration,
+        service_charge: serviceCharge,
         speciality: speciality,
         bio: bioText.trim(),
       }, {
@@ -203,6 +234,159 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
       console.error('Error updating profile:', error);
     }
   }
+
+  const updateMB = async (e) => {
+    e.preventDefault();
+    try {
+      const formData = new FormData();
+      formData.append('home_checkup_service', homeCheckupService);
+      formData.append('medical_background', medicalBackgroundText);
+
+      // Append medical_license to formData only if it has a value
+      if (medicalLicense) {
+        formData.append('medical_license', medicalLicense);
+      }
+
+      await axios.patch(`${ip}/api/edit-medical-background/${doctorData.id}/`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'multipart/form-data', // Ensure content type is set to multipart/form-data
+          },
+        }
+      );
+
+      console.log('Medical Background updated successfully');
+      fetchDoctorData();
+      swal.fire({
+        title: "Medical Background updated successfully.",
+        icon: "success",
+        toast: true,
+        timer: 3000,
+        position: "top-right",
+        timerProgressBar: true,
+        showConfirmButton: false,
+        showCloseButton: true,
+      });
+    } catch (error) {
+      console.error('Error updating medical background:', error);
+    }
+  };
+
+
+  const [viewFullLicense, setViewFullLicense] = useState(false)
+
+  const [licenseDisplay, setLicenseDisplay] = useState()
+  const handleLicenceImage = (e) => {
+    const file = e.target.files[0];
+    setMedicalLicense(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setLicenseDisplay(event.target.result);
+        console.log(file, event.target.result)
+      };
+
+      reader.readAsDataURL(file);
+    }
+  };
+
+
+
+  const [oldPassword, setOldPassword] = useState(null);
+  const [newPassword, setNewPassword] = useState(null);
+  const [confirmPassword, setConfirmPassword] = useState(null);
+  const [error, setError] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+
+  const [changePWLoading, setChangePWLoading] = useState(false)
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+    if (oldPassword && newPassword && confirmPassword) {
+      if (newPassword === confirmPassword) {
+        setChangePWLoading(true)
+        try {
+          const response = await axios.patch(
+            `${ip}/api/change-password/`,
+            {
+              old_password: oldPassword,
+              new_password: newPassword
+            },
+            {
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'Content-Type': 'application/json'
+              }
+            }
+          );
+
+          console.log(response)
+          if (response.status === 200) {
+            console.log(response.data.message)
+            swal.fire({
+              title: response.data.message,
+              icon: "success",
+              toast: true,
+              timer: 3000,
+              position: "top-right",
+              timerProgressBar: true,
+              showConfirmButton: false,
+              showCloseButton: true,
+            });
+          }
+          else {
+            console.log(response.data.response.data)
+          }
+          setSuccessMessage(response.data.message);
+          setError(null);
+          setOldPassword('');
+          setNewPassword('');
+          setConfirmPassword('')
+        } catch (error) {
+          setError(true);
+          console.log('catch error', error.response.data)
+          swal.fire({
+            title: error.response.data.old_password,
+            icon: "error",
+            toast: true,
+            timer: 3000,
+            position: "top-right",
+            timerProgressBar: true,
+            showConfirmButton: false,
+            showCloseButton: true,
+          });
+        }
+        finally {
+          setChangePWLoading(false)
+        }
+      }
+      else{
+        swal.fire({
+          title: "Password Confirmation didn't matched.",
+          icon: "error",
+          toast: true,
+          timer: 3000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+          showCloseButton: true,
+        });
+      }
+    }
+    else{
+      swal.fire({
+        title: "Password field cannot be empty.",
+        icon: "warning",
+        toast: true,
+        timer: 3000,
+        position: "top-right",
+        timerProgressBar: true,
+        showConfirmButton: false,
+        showCloseButton: true,
+      });
+    }
+  };
 
   return (
     <>
@@ -294,6 +478,23 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
                         <input type="text" id="speciality" value={speciality} onChange={(e) => setSpeciality(e.target.value)} />
                       </div>
 
+                      <div className="appointment-duration">
+                        <label htmlFor="appointment-duration">AVG Appointment Duration (Minutes)</label>
+                        <select name="" id="appointment-duration" onChange={(e) => setAppointmentDuration(e.target.value)}>
+                          <option value="10" selected={appointmentDuration == 10}>10 Min</option>
+                          <option value="20" selected={appointmentDuration == 20}>20 Min</option>
+                          <option value="30" selected={appointmentDuration == 30}>30 Min</option>
+                          <option value="40" selected={appointmentDuration == 40}>40 Min</option>
+                          <option value="50" selected={appointmentDuration == 50}>50 Min</option>
+                          <option value="60" selected={appointmentDuration == 60}>60 Min</option>
+                        </select>
+                      </div>
+
+                      <div className="service-charge">
+                        <label htmlFor="service-charge">Service Charge</label>
+                        <input type="number" id="service-charge" value={serviceCharge} onChange={(e) => setServiceCharge(e.target.value)} />
+                      </div>
+
                       <div className="bio">
                         <label htmlFor="bio">Bio</label>
                         <textarea
@@ -303,6 +504,7 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
                           rows={1}  // Set a small number of rows initially
                           style={{ resize: 'none', overflowY: 'hidden' }} // Disable textarea resizing and hide overflow
                           className={isEditing && 'editing'}
+                          placeholder='Not Set'
                         />
                         {isEditing && (
                           <>
@@ -316,19 +518,64 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
                   </div>
                 </div>
 
+                <div className="other-details-container">
+                  <h3>Other Details:</h3>
+                  <form action="" onSubmit={updateMB}>
+
+                    <div className="home-checkup">
+                      <label htmlFor="home-checkup" className='main-label'>Home Checkup Service <span><LuInfo /></span></label>
+                      <div className="checkbox-container">
+                        <label>
+                          <input type="checkbox" class="toggle-checkbox" id='home-checkup' onChange={(e) => setHomeCheckupService(e.target.checked)} checked={homeCheckupService} />
+                          <div class="toggle-switch"></div>
+                        </label>
+                        <p className={homeCheckupService ? 'active' : ''}>{homeCheckupService ? 'Available' : 'Not Available'}</p>
+                      </div>
+                    </div>
+
+                    <div className="medical-license">
+                      <label htmlFor="medical-license">Medical License</label>
+                      <div className="imege-upload">
+                        <input type="file" id="medical-license" onChange={handleLicenceImage} />
+                        <button type="button" onClick={() => setViewFullLicense(!viewFullLicense)}>View</button>
+                      </div>
+                    </div>
+
+                    <div className="bio">
+                      <label htmlFor="medical-background">Medical Background</label>
+                      <textarea
+                        ref={medicalBackgroundRef}
+                        value={medicalBackgroundText.replace(/\n/g, '\r\n')} // Handle line breaks directly in the value
+                        onChange={handleMedicalBackgroundChange}
+                        rows={1}  // Set a small number of rows initially
+                        style={{ resize: 'none', overflowY: 'hidden' }} // Disable textarea resizing and hide overflow
+                        className={isMBEditing && 'editing'}
+                        placeholder='Not Set'
+                      />
+                      {isMBEditing && (
+                        <>
+                          <div className={`chars ${(maxMBCharacters - medicalBackgroundText.length) < 0 ? 'exceed' : null}`}>Characters remaining: {maxMBCharacters - medicalBackgroundText.length}</div>
+                        </>
+                      )}
+                    </div>
+
+                    <button disabled={disableUpdate} type='submit' className="update-profile">Update</button>
+                  </form>
+                </div>
+
                 <div className="change-passowrd-container">
                   <h3>Change Password:</h3>
-                  <form action="">
-                    <label htmlFor="old-password">Old Password</label>
-                    <input type="password" id='old-password' />
+                  <form action="" onSubmit={handleChangePassword}>
+                    <label htmlFor="old-password" className={error?'error':''}>Old Password</label>
+                    <input type="password" id='old-password' className={error?'error':''} value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
 
                     <label htmlFor="new-password">New Password</label>
-                    <input type="password" id='new-password' />
+                    <input type="password" id='new-password' value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
 
                     <label htmlFor="confirm-password">Confirm New Password</label>
-                    <input type="password" id='confirm-password' />
+                    <input type="password" id='confirm-password' value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
 
-                    <button type="submit">Change Password</button>
+                    <button disabled={changePWLoading} type="submit">{changePWLoading ? 'Loading...' : 'Change Password'}</button>
                   </form>
                 </div>
               </div>
@@ -338,6 +585,23 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
                   <RxCross2 onClick={() => setViewFullImage(!viewFullImage)} />
                   <div className="image-container" style={doctorData ? {
                     backgroundImage: `url(${profilePicture})`,
+                    backgroundPosition: 'center',
+                    backgroundSize: 'contain',
+                    backgroundRepeat: 'no-repeat',
+                  } : null}>
+
+                  </div>
+                </div>
+                :
+                null
+              }
+
+              {viewFullLicense
+                ?
+                <div className="full-image-div license-image">
+                  <RxCross2 onClick={() => setViewFullLicense(!viewFullLicense)} />
+                  <div className="image-container" style={doctorData ? {
+                    backgroundImage: `url(${licenseDisplay})`,
                     backgroundPosition: 'center',
                     backgroundSize: 'contain',
                     backgroundRepeat: 'no-repeat',

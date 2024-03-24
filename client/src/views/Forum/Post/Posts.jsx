@@ -6,34 +6,44 @@ import { FiFilter } from "react-icons/fi";
 import { BsThreeDots } from "react-icons/bs";
 import { FaRegComment } from "react-icons/fa";
 import { useHistory } from 'react-router-dom'
+import useAxios from '../../../utils/useAxios';
+import AddPost from './AddPost'
 
+// const truncateWords = (text, numWords) => {
+//   const words = text.split(' ');
+//   return words.slice(0, numWords).join(' ') + (words.length > numWords ? ' ...' : '');
+// };
 
 const truncateWords = (text, numWords) => {
   const words = text.split(' ');
-  return words.slice(0, numWords).join(' ') + (words.length > numWords ? ' ...' : '');
+  if (numWords >= words.length) {
+    return text;
+  }
+  return words.slice(0, numWords).join(' ') + ' ...';
 };
+
 
 const Posts = () => {
   const history = useHistory()
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState([])
+  const axios = useAxios()
   useEffect(() => {
     const fetchPosts = async () => {
       const accessToken = localStorage.getItem('authTokens') ? JSON.parse(localStorage.getItem('authTokens')).access : null;
       if (accessToken) {
         try {
-          const response = await fetch(`${ip}/forum/posts/`, {
-            method: 'GET',
+          const response = await axios.get(`${ip}/forum/posts/`, {
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
           });
 
-          if (response.ok) {
-            const data = await response.json();
+          if (response.status === 200) { // Assuming 200 is the status for a successful request
+            const data = response.data;
             console.log('Posts:', data);
-            setPosts(data)
+            setPosts(data);
           } else {
             console.error('Error fetching posts:', response.statusText);
           }
@@ -42,43 +52,44 @@ const Posts = () => {
         }
 
         try {
-          const response = await fetch(`${ip}/forum/posts/`, {
-            method: 'GET',
+          const response = await axios.get(`${ip}/forum/posts/`, {
             headers: {
               'Content-Type': 'application/json',
-              // Add any authentication headers if needed
               'Authorization': `Bearer ${localStorage.getItem('token')}`,
             },
           });
 
-          if (!response.ok) {
-            throw new Error(`Failed to fetch posts: ${response.statusText}`);
+          if (response.status === 200) { // Assuming 200 is the status for a successful request
+            const data = response.data;
+            setPosts(data);
+            setLoading(false);
+            console.log("The posts are: ", data);
+          } else {
+            console.error('Error fetching posts:', response.statusText);
+            // Handle error state as needed
           }
-
-          const data = await response.json();
-          setPosts(data);
-          setLoading(false);
-          console.log("The posts are: ", data)
         } catch (error) {
           console.error('Error fetching posts:', error);
           // Handle error state as needed
         }
-
       } else {
         console.error('Access token not found in local storage.');
       }
     };
+
     // Call the fetchPosts function
     fetchPosts();
-
-  }, []); // Empty dependency array ensures that the effect runs only once when the component mounts
+  }, []);
+  // Empty dependency array ensures that the effect runs only once when the component mounts
 
   const [showFullText, setShowFullText] = useState(false);
 
 
   return (
     <section className="post-feed">
-      <div className="posts">
+      <div className="main-container">
+      <AddPost />
+      {/* <div className="posts">
         <div className="contents">
           {posts && posts.map((post) => (
             <div className="content">
@@ -132,6 +143,7 @@ const Posts = () => {
             </div>
           ))}
         </div>
+      </div> */}
       </div>
     </section>
   );

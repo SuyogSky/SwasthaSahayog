@@ -1,7 +1,17 @@
 .post-feed {
     width: 100%;
     display: flex;
-    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: rgba(0,0,0,0.05);
+    margin-top: 80px;
+    box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 40px 6%;
+    .main-container{
+        width: 600px;
+        max-width: 600px;
+        background-color: red;
+    }
     .posts {
         width: 600px;
         .contents {

@@ -31,7 +31,19 @@ function RegisterDoctor() {
     e.preventDefault();
 
     if(email, username, phone, city, license, password, password2){
-      if (password === password2) {
+      if (phone.length !== 10) {
+        swal.fire({
+            title: "Please enter a valid phone number.",
+            icon: "warning",
+            toast: true,
+            timer: 6000,
+            position: "top-right",
+            timerProgressBar: true,
+            showConfirmButton: false,
+            showCloseButton: true,
+        });
+    }
+    else if (password === password2) {
         const formDataToSend = new FormData();
         formDataToSend.append('email', email);
         formDataToSend.append('username', username);

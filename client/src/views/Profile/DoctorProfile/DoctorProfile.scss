@@ -220,7 +220,7 @@
         .doctor-profile-contents {
             width: 100%;
             margin: 30px 0;
-            padding: 0 10px;
+            // padding: 0 10px;
 
             .content {
                 display: none;
@@ -233,7 +233,6 @@
             .overview {
                 width: 100%;
                 flex-direction: column;
-
                 h4 {
                     font-size: 24px;
                     font-weight: 500;
@@ -249,8 +248,9 @@
                 pre {
                     font-family: poppins;
                     margin-top: 20px;
-                    width: 100%;
+                    max-width: 100%;
                     color: rgba(0, 0, 0, 0.5);
+                    white-space: pre-wrap;
                 }
 
                 pre {
@@ -262,160 +262,13 @@
                 width: 100%;
                 justify-content: space-between;
                 padding-top: 40px;
-                .left {
-                    .information {
-                        h4 {
-                            color: var(--main-color);
-                        }
-
-                        .info {
-                            display: flex;
-                            align-items: center;
-                            justify-content: flex-start;
-                            margin-left: 20px;
-                            .image {
-                                width: 60px;
-                                height: 60px;
-                                border-radius: 50%;
-                                margin-right: 20px;
-                            }
-
-                            .details {
-                                p {
-                                    font-weight: 500;
-                                    font-size: 18px;
-                                }
-
-                                span {
-                                    font-size: 15px;
-                                    font-weight: 400;
-                                    color: rgba(0, 0, 0, 0.5);
-                                }
-                            }
-                        }
-                        .working-hours{
-                            display: inline-block;
-                            margin-top: 20px;
-                            font-size: 20px;
-                            color: rgba(0,0,0,0.5);
-                            font-weight: 400;
-                            margin-left: 20px;
-                            span{
-                                font-weight: 500;
-                                color: var(--main-color);
-                            }
-                        }
-                        
-                        &.doctor-details {
-                            margin-top: 60px;
-
-                            .info .details span {
-                                color: var(--main-color);
-                                font-size: 16px;
-                            }
-                        }
-                    }
-
-                }
-
-                .appointment-form-container {
-                    border: 1px solid rgba(0, 0, 0, 0.2);
-                    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
-                    padding: 30px 40px;
-                    border-radius: 8px;
-                    width: 50%;
-                    h6{
-                        font-size: 32px;
-                        font-weight: 500;
-                        margin-bottom: 35px;
-                        padding-left: 10px;
-                        position: relative;
-                        color: rgba(0,0,0,0.7);
-                        &:before{
-                            content: '';
-                            position: absolute;
-                            display: inline-block;
-                            width: 5px;
-                            height: 30px;
-                            top: 50%;
-                            left: 0;
-                            transform: translateY(-50%);
-                            background: linear-gradient(var(--main-color), rgb(193, 237, 193));
-                            border-radius: 50px;
-                        }
-                    }
-                    form {
-                        display: flex;
-                        flex-flow: wrap;
-                        align-items: center;
-                        justify-content: space-between;
-                        div {
-                            display: flex;
-                            flex-direction: column;
-                            width: calc(50% - 20px);
-                            label {
-                                font-size: 16px;
-                                font-weight: 500;
-                                color: rgba(0,0,0,0.5);
-                                span {
-                                    color: red;
-                                }
-                            }
-
-                            input {
-                                width: 100%;
-                                height: 40px;
-                                padding: 0 10px;
-                                border-radius: 5px;
-                                border: 1px solid rgba(0, 0, 0, 0.2);
-                                outline: none;
-                                color: rgba(0, 0, 0, 0.6);
-                            }
-                            &.comment{
-                                width: 100%;
-                                margin-top: 40px;
-                                label{
-                                    font-size: 18px;
-                                }
-                                textarea {
-                                    color: rgba(0, 0, 0, 0.6);
-                                    width: 100%;
-                                    height: 250px;
-                                    overflow: auto;
-                                    max-height: 400px;
-                                    overflow: auto;
-                                    padding: 10px 20px;
-                                    border-radius: 7px;
-                                    resize: none;
-                                    border: 1px solid rgba(0,0,0,0.2);
-                                    outline: none;
-                                }
-                            }
-                        }
-                        button{
-                            width: 100%;
-                            height: 45px;
-                            background-color: var(--main-color);
-                            border: none;
-                            outline: none;
-                            border-radius: 5px;
-                            margin-top: 30px;
-                            font-size: 16px;
-                            color: white;
-                            font-weight: 500;
-                        }
-                    }
-
-                    @media (max-width: 500px) {
-                        form {
-                            grid-template-columns: 1fr;
-                        }
-                    }
-
-                }
+            }
+            .reviews{
+                flex-direction: column;
             }
         }
     }
+
 
 
 
@@ -849,170 +702,6 @@
     //     }
     // }
 
-    .upload-post-form {
-        width: 100%;
-        height: 100vh;
-        background-color: rgba(255, 255, 255, 0.7);
-        position: fixed;
-        top: 0;
-        left: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 1001;
-
-        form {
-            background-color: white;
-            box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.3);
-            width: 400px;
-            border-radius: 8px;
-
-            .top {
-                width: 100%;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 55px;
-                position: relative;
-
-                h6 {
-                    margin-bottom: 0;
-                    font-size: 20px;
-                    color: rgba(0, 0, 0, 0.5);
-                }
-
-                svg {
-                    position: absolute;
-                    right: 15px;
-                    background-color: rgba(0, 0, 0, 0.08);
-                    color: rgba(0, 0, 0, 0.3);
-                    border-radius: 50%;
-                    width: 30px;
-                    height: 30px;
-                    padding: 3px;
-                    cursor: pointer;
-
-                    &:hover {
-                        background-color: rgba(0, 0, 0, 0.1);
-                    }
-                }
-            }
-
-            .user-detail {
-                display: flex;
-                align-items: center;
-                padding: 10px 20px;
-                gap: 10px;
-
-                .image {
-                    width: 50px;
-                    height: 50px;
-                    background-color: rgba(0, 0, 0, 0.1);
-                    border-radius: 50%;
-                }
-
-                p {
-                    display: flex;
-                    flex-direction: column;
-
-                    .name {
-                        font-size: 15px;
-                        font-weight: 500;
-                    }
-
-                    .date {
-                        font-size: 12px;
-                        color: rgba(0, 0, 0, 0.5);
-                    }
-                }
-            }
-
-            .post-content-fields {
-                width: 100%;
-                max-height: 400px;
-                overflow-y: auto;
-
-                &::-webkit-scrollbar {
-                    width: 9px;
-                }
-
-                &::-webkit-scrollbar-thumb {
-                    background-color: #c3cdda;
-                    border-radius: 10px;
-                }
-
-                &::-webkit-scrollbar-track {
-                    background-color: #e3e3e3;
-                    border-radius: 50px;
-                }
-
-                textarea {
-                    width: 100%;
-                    overflow-y: hidden;
-                    padding: 10px 20px;
-                    border: none;
-                    outline: none;
-                    resize: none;
-                }
-
-                .image-upload {
-                    width: 100%;
-                    padding: 0 20px;
-
-                    .image-field {
-                        border: 1px dashed rgba(0, 0, 0, 0.5);
-                        border-radius: 5px;
-                        width: 100%;
-                        aspect-ratio: 9/6;
-                        background-color: rgba(0, 0, 0, 0.02);
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        flex-direction: column;
-                        cursor: pointer;
-                        padding: 8px;
-
-                        &:hover {
-                            background-color: rgba(0, 0, 0, 0.08);
-                        }
-
-                        input[type="file"] {
-                            display: none;
-                        }
-
-                        svg {
-                            font-size: 32px;
-                        }
-
-                        img {
-                            width: 100%;
-                            border-radius: 3px;
-                        }
-                    }
-                }
-            }
-
-            .btn-container {
-                padding: 15px 20px;
-                padding-bottom: 20px;
-
-                .upload-btn {
-                    width: 100%;
-                    height: 40px;
-                    background-color: var(--main-color);
-                    border: none;
-                    outline: none;
-                    color: white;
-                    border-radius: 5px;
-
-                    &:hover {
-                        background-color: var(--main-color-dark);
-                    }
-                }
-            }
-        }
-    }
 
     .full-image-div {
         width: 100%;

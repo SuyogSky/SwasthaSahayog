@@ -1,0 +1,171 @@
+.left {
+    .information {
+        h4 {
+            color: var(--main-color);
+        }
+
+        .info {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin-left: 20px;
+
+            .image {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                margin-right: 20px;
+            }
+
+            .details {
+                p {
+                    font-weight: 500;
+                    font-size: 18px;
+                }
+
+                span {
+                    font-size: 15px;
+                    font-weight: 400;
+                    color: rgba(0, 0, 0, 0.5);
+                }
+            }
+        }
+
+        .working-hours {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 20px;
+            color: rgba(0, 0, 0, 0.5);
+            font-weight: 400;
+            margin-left: 20px;
+
+            span {
+                font-weight: 500;
+                color: var(--main-color);
+            }
+        }
+
+        &.doctor-details {
+            margin-top: 60px;
+
+            .info .details span {
+                color: var(--main-color);
+                font-size: 16px;
+            }
+        }
+    }
+
+}
+
+.appointment-form-container {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.05);
+    padding: 30px 40px;
+    border-radius: 8px;
+    width: 70%;
+
+    h6 {
+        font-size: 32px;
+        font-weight: 500;
+        margin-bottom: 35px;
+        padding-left: 10px;
+        position: relative;
+        color: rgba(0, 0, 0, 0.7);
+
+        &:before {
+            content: '';
+            position: absolute;
+            display: inline-block;
+            width: 5px;
+            height: 30px;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            background: linear-gradient(var(--main-color), rgb(193, 237, 193));
+            border-radius: 50px;
+        }
+    }
+
+    form {
+        display: flex;
+        // flex-flow: wrap;
+        flex-direction: column;
+        // align-items: center;
+        justify-content: space-between;
+
+        
+
+
+
+
+
+        div {
+            display: flex;
+            flex-direction: column;
+            // width: calc(50% - 20px);
+
+            label {
+                font-size: 16px;
+                font-weight: 500;
+                color: rgba(0, 0, 0, 0.5);
+
+                span {
+                    color: red;
+                }
+            }
+
+            input {
+                width: 100%;
+                height: 40px;
+                padding: 0 10px;
+                border-radius: 5px;
+                border: 1px solid rgba(0, 0, 0, 0.2);
+                outline: none;
+                color: rgba(0, 0, 0, 0.6);
+            }
+
+            &.comment {
+                width: 100%;
+                margin-top: 40px;
+
+                label {
+                    font-size: 18px;
+                }
+
+                textarea {
+                    color: rgba(0, 0, 0, 0.6);
+                    width: 100%;
+                    height: 250px;
+                    overflow: auto;
+                    max-height: 400px;
+                    overflow: auto;
+                    padding: 10px 20px;
+                    border-radius: 7px;
+                    resize: none;
+                    border: 1px solid rgba(0, 0, 0, 0.2);
+                    outline: none;
+                }
+            }
+        }
+
+        button[type="submit"] {
+            width: 100%;
+            height: 45px;
+            background-color: var(--main-color);
+            border: none;
+            outline: none;
+            border-radius: 5px;
+            margin-top: 30px;
+            font-size: 16px;
+            color: white;
+            font-weight: 500;
+        }
+    }
+
+    @media (max-width: 500px) {
+        form {
+            grid-template-columns: 1fr;
+        }
+    }
+
+}

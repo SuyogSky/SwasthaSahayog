@@ -5,12 +5,17 @@ import { IoSearch } from "react-icons/io5";
 import { MdOutlineMessage } from "react-icons/md";
 import useAxios from '../../../utils/useAxios';
 import swal from 'sweetalert2'
+import { jwtDecode } from 'jwt-decode';
 
 function SearchUser() {
     const baseUrl = `${ip}/chat`
     const history = useHistory()
     const { username } = useParams()
     const axios = useAxios()
+
+    const token = localStorage.getItem("authTokens")
+    const decoded = jwtDecode(token)
+    const user_id = decoded.user_id
 
     const [newSearch, setNewSearch] = useState('')
     const [user, setUser] = useState([])
@@ -46,7 +51,7 @@ function SearchUser() {
                             alert('User does not exist.')
                         }
                         else {
-                            history.push('/doctor/search/' + newSearch)
+                            history.push('/' + decoded.role + '/search/' + newSearch)
                             setUser(res.data)
                         }
                     })
@@ -79,7 +84,7 @@ function SearchUser() {
                 <div className="users found-users">
                     {user ? user.map((user, index) => {
                         return (
-                            <Link className="user" to={'/doctor/inbox/' + user.id}>
+                            <Link className="user" to={'/' + decoded.role + '/inbox/' + user.id}>
                                 <div className="image" style={user ? {
                                     backgroundImage: `url(${user.image})`,
                                     backgroundPosition: 'center',

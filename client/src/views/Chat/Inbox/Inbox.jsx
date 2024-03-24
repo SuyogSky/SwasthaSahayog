@@ -14,6 +14,9 @@ import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 import { MdOutlineArrowRight } from "react-icons/md";
 function Inbox() {
     const history = useHistory()
+    const token = localStorage.getItem("authTokens")
+    const decoded = jwtDecode(token)
+    const user_id = decoded.user_id
 
 
     const baseUrl = `${ip}/chat`
@@ -22,11 +25,27 @@ function Inbox() {
     const { id } = useParams()
     const axios = useAxios()
 
-    const token = localStorage.getItem("authTokens")
-    const decoded = jwtDecode(token)
-    const user_id = decoded.user_id
 
 
+    const [visitedUserData, setVisitedUserData] = useState(null);
+
+    // Fetch client details from the backend API using the client ID
+    const fetchUserData = () => {
+        axios.get(`${ip}/api/user/${id}/`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            },
+        })
+            .then(response => {
+                setVisitedUserData(response.data);
+                console.log('visited user is', response.data.role);
+            })
+            .catch(error => console.error('Error fetching client details:', error));
+    };
+    useEffect(() => {
+        fetchUserData();
+    }, [id]);
 
     // ========== For Message Details ==========
     const [message, setMessage] = useState()
@@ -46,11 +65,30 @@ function Inbox() {
         getChats()
     }, [chatHistory, history])
 
+    const markMessagesAsRead = async (senderId, receiverId) => {
+        console.log(senderId, user_id)
+        if (senderId == user_id) {
+            try {
+                await axios.post(`${baseUrl}/mark_messages_as_read/${senderId}/${receiverId}/`);
+                console.log('Messages marked as read successfully.');
+                getChats()
+            } catch (error) {
+                console.error('Error marking messages as read:', error);
+            }
+        }
+    };
+
+    const [isFocused, setIsFocused] = useState(false)
+    useEffect(() => {
+        if (isFocused) {
+            // markMessagesAsRead(user_id, id)
+        }
+    }, [id, chatHistory, isFocused])
     const getChatHistory = () => {
         try {
             axios.get(baseUrl + '/get-messages/' + user_id + '/' + id + '/').then((res) => {
                 setChatHistory(res.data)
-                // console.log('mess: ', res.data)
+                console.log('mess: ', res.data)
             })
         } catch (error) {
             console.log(error)
@@ -58,8 +96,56 @@ function Inbox() {
     }
     useEffect(() => {
         getChatHistory()
+        // }, [id, history])
     }, [id, history])
 
+
+    const [ws, setWs] = useState(null);
+    useEffect(() => {
+        // Open a WebSocket connection when the component mounts
+        const socket = new WebSocket(`ws://${ip_websocket}/ws/chat/${user_id}/${id}/`);
+
+        socket.onopen = () => {
+            console.log('WebSocket connection opened');
+            setWs(socket);
+        };
+
+        socket.onmessage = (event) => {
+            // Handle incoming messages
+            const data = JSON.parse(event.data);
+            console.log(data)
+
+            if (data.image) {
+                const imageBase64 = data.image;
+
+                // Decode base64 string to binary
+                const binaryData = atob(imageBase64);
+
+                // Convert binary data to Blob
+                const blob = new Blob([new Uint8Array(binaryData.length).map((_, i) => binaryData.charCodeAt(i))], { type: 'image/jpeg' });
+
+                // Create object URL from Blob
+                const imageUrl = URL.createObjectURL(blob);
+
+                // Add the image URL to the data
+                data.image = imageUrl;
+            }
+
+            // Append the modified data to the chat history
+            setChatHistory((prevChatHistory) => [...prevChatHistory, data]);
+        };
+
+        socket.onclose = () => {
+            console.log('WebSocket connection closed');
+        };
+
+        // Close the WebSocket connection when the component unmounts
+        return () => {
+            if (ws) {
+                ws.close();
+            }
+        };
+    }, [user_id, id]);
 
 
     const [receiverData, setReceiverData] = useState(null);
@@ -122,30 +208,60 @@ function Inbox() {
 
     const [text, setText] = useState('')
 
+    // const sendMessage = (e) => {
+    //     e.preventDefault()
+    //     const formData = new FormData()
+    //     formData.append("user", user_id)
+    //     formData.append("sender", user_id)
+    //     formData.append("receiver", id)
+    //     if (image !== null && image != '') {
+    //         formData.append("image", image)
+    //     }
+    //     formData.append("message", text)
+    //     formData.append("is_read", false)
+
+    //     try {
+    //         axios.post(baseUrl + '/send-messages/', formData).then((res) => {
+    //             console.log(res.data)
+    //             setText('')
+    //             setImage(null)
+    //             setDisplayImage(null)
+    //             getChatHistory()
+    //         })
+    //     } catch (error) {
+    //         console.log(error)
+    //     }
+    // }
     const sendMessage = (e) => {
         e.preventDefault()
-        const formData = new FormData()
-        formData.append("user", user_id)
-        formData.append("sender", user_id)
-        formData.append("receiver", id)
-        if (image !== null && image != '') {
-            formData.append("image", image)
-        }
-        formData.append("message", text)
-        formData.append("is_read", false)
+        console.log(ws);
+        if (ws && (text.trim() !== '' || image !== null && image !== '')) {
+            const data = {
+                message: text,
+                sender: user_id,
+                receiver: id,
+            };
 
-        try {
-            axios.post(baseUrl + '/send-messages/', formData).then((res) => {
-                console.log(res.data)
-                setText('')
-                setImage(null)
-                setDisplayImage(null)
-                getChatHistory()
-            })
-        } catch (error) {
-            console.log(error)
+            if (image !== null && image !== '') {
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    const base64Data = reader.result.split(',')[1];
+                    data.image = base64Data;  // Append the image data to the data object
+                    ws.send(JSON.stringify(data));
+                    console.log(base64Data);
+                };
+
+                reader.readAsDataURL(image);
+            } else {
+                ws.send(JSON.stringify(data));  // Send the data without image if image is not present
+            }
+
+            setText('');
+            setImage(null)
+            setDisplayImage(null)
+
         }
-    }
+    };
 
     // const sendMessage = () => {
     //     var ws = new WebSocket(`ws://${ip_websocket}/ws/chat/${user_id}/${id}/`);
@@ -195,7 +311,7 @@ function Inbox() {
         if (inboxRef.current) {
             inboxRef.current.scrollTop = inboxRef.current.scrollHeight;
         }
-    }, [message, chatHistory]);
+    }, [message, chatHistory, history]);
 
 
     const [displayImage, setDisplayImage] = useState(null);
@@ -232,7 +348,7 @@ function Inbox() {
                             alert('User does not exist.')
                         }
                         else {
-                            history.push('/doctor/search/' + newSearch)
+                            history.push('/' + decoded.role + '/search/' + newSearch)
                         }
                     })
                     .catch((error) => {
@@ -260,7 +376,7 @@ function Inbox() {
                         messages.map((message) => {
                             const reveiverId = message.sender.id === user_id ? message.receiver.id : message.sender.id
                             return (
-                                <Link className={`user ${id == reveiverId ? 'active' : ''}`} to={'/doctor/inbox/' + reveiverId}>
+                                <Link className={`user ${id == reveiverId ? 'active' : ''}`} to={'/' + decoded.role + '/inbox/' + reveiverId} onClick={() => markMessagesAsRead(user_id, reveiverId)}>
                                     {message.sender.id === user_id &&
                                         <div className="image" style={message ? {
                                             backgroundImage: `url(${message.receiver.image})`,
@@ -280,7 +396,7 @@ function Inbox() {
                                         } : null}>
                                         </div>
                                     }
-                                    <div className="user-details">
+                                    <div className={`user-details ${(message.sender.id !== user_id && !message.is_read) && 'unread'}`}>
                                         {message.sender.id !== user_id &&
                                             <h6>{message.sender.username}</h6>
                                         }
@@ -288,7 +404,7 @@ function Inbox() {
                                             <h6>{message.receiver.username}</h6>
                                         }
 
-                                        <p className='message-display'><span className='message'>{message.message ? message.message : message.image ? 'Sent Attachment.' : null}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
+                                        <p className='message-display'><span className='message'>{message.sender.id === user_id && 'You: '}{message.message ? message.message : message.image ? 'Sent Attachment.' : null}</span> <span className='time'>{moment.utc(message.date).local().startOf('seconds').fromNow()}</span></p>
                                     </div>
                                 </Link>
                             )
@@ -301,8 +417,8 @@ function Inbox() {
             <div className="message-box-container">
                 <div className="top">
                     <div className="user-detail">
-                        <div className="image" style={receiverData ? {
-                            backgroundImage: `url(${receiverData.image})`,
+                        <div className="image" style={visitedUserData ? {
+                            backgroundImage: `url(${visitedUserData.image})`,
                             backgroundPosition: 'center',
                             backgroundSize: 'cover',
                             backgroundRepeat: 'no-repeat',
@@ -310,7 +426,7 @@ function Inbox() {
 
                         </div>
                         <div className="details">
-                            <h6>{receiverData?.username}</h6>
+                            <h6>{visitedUserData?.username}</h6>
                             <p>online</p>
                         </div>
                     </div>
@@ -336,6 +452,19 @@ function Inbox() {
                         //     </div>
                     }
                     )} */}
+                    <div className="first">
+                        <div className="image" style={visitedUserData ? {
+                            backgroundImage: `url(${visitedUserData.image})`,
+                            backgroundPosition: 'center',
+                            backgroundSize: 'cover',
+                            backgroundRepeat: 'no-repeat',
+                        } : null}>
+
+                        </div>
+                        <h6>{visitedUserData?.username}</h6>
+                        <p>You can chat with eachother.</p>
+                        <span onClick={() => history.push('/profile/' + visitedUserData.id)}>View Profile</span>
+                    </div>
 
                     {chatHistory && chatHistory.map(message => {
                         return (
@@ -344,7 +473,7 @@ function Inbox() {
                                     <div className="message sent">
                                         <div className="profile">
                                             <div className="image" style={message ? {
-                                                backgroundImage: `url(${message.sender.image})`,
+                                                backgroundImage: `url(${(message.sender.image).includes(ip) ? message.sender.image : ip + message.sender.image})`,
                                                 backgroundPosition: 'center',
                                                 backgroundSize: 'cover',
                                                 backgroundRepeat: 'no-repeat',
@@ -369,7 +498,7 @@ function Inbox() {
                                     <div className="message recieved">
                                         <div className="profile">
                                             <div className="image" style={message ? {
-                                                backgroundImage: `url(${message.sender.image})`,
+                                                backgroundImage: `url(${(message.sender.image).includes(ip) ? message.sender.image : ip + message.sender.image})`,
                                                 backgroundPosition: 'center',
                                                 backgroundSize: 'cover',
                                                 backgroundRepeat: 'no-repeat',
@@ -410,7 +539,7 @@ function Inbox() {
                             </div>
                         </div>
                     )}
-                    <input type="text" name="message" placeholder='Enter Message Here...' value={text} onChange={(e) => setText(e.target.value)} />
+                    <input type="text" name="message" placeholder='Enter Message Here...' onFocus={() => setIsFocused(true)} onBlur={() => setIsFocused(false)} value={text} onChange={(e) => setText(e.target.value)} />
                     <input type="file" id='image' onChange={handleImageUpload} />
                     <label htmlFor="image"><IoImageOutline /></label>
                     <button type="submit"><BsSend /></button>

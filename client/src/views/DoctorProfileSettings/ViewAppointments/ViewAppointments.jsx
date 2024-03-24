@@ -18,28 +18,27 @@ function ViewAppointments() {
 
     const [loading, setLoading] = useState(false)
     const fetchDoctorAppointments = async () => {
-        setLoading(true)
-        setAppointments([])
-        setPendingAppointments([])
-        setApprovedAppointments([])
-        setRejectedAppointments([])
+        setLoading(true);
+        setAppointments([]);
+        setPendingAppointments([]);
+        setApprovedAppointments([]);
+        setRejectedAppointments([]);
+
         try {
-            const response = await fetch(`${ip}/appointment/doctor-appointments/`, {
-                method: 'GET',
+            const response = await axios.get(`${ip}/appointment/doctor-appointments/`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    // Add any authentication headers if needed
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
             });
 
-            if (!response.ok) {
-                throw new Error(`Failed to fetch posts: ${response.statusText}`);
+            if (!response.status == 200) {
+                throw new Error(`Failed to fetch doctor appointments: ${response.statusText}`);
             }
 
-            const data = await response.json();
+            const data = response.data;
             setAppointments(data);
-            setAllAppointments(data)
+            setAllAppointments(data);
             setLoading(false);
 
             // Assuming you have state variables like this:
@@ -55,9 +54,9 @@ function ViewAppointments() {
                 }
             });
 
-            console.log("The appointments are: ", data)
+            console.log("The appointments are: ", data);
         } catch (error) {
-            console.error('Error fetching posts:', error);
+            console.error('Error fetching doctor appointments:', error);
             // Handle error state as needed
         }
     };
@@ -130,19 +129,19 @@ function ViewAppointments() {
         <div className='view-doctor-appointments'>
             <div className="tab-bar-container">
                 <ul>
-                    <li className={`${activeTab === 'all'?'active':''}`} onClick={() => {
+                    <li className={`${activeTab === 'all' ? 'active' : ''}`} onClick={() => {
                         setActiveTab('all')
                         fetchDoctorAppointments()
                     }}>All <span className="count">{allAppointments.length}</span></li>
-                    <li className={`${activeTab === 'pending'?'active':''}`} onClick={() => {
+                    <li className={`${activeTab === 'pending' ? 'active' : ''}`} onClick={() => {
                         setActiveTab('pending')
                         setAppointments(pendingAppointments)
                     }}>Pending <span className="count">{pendingAppointments.length}</span></li>
-                    <li className={`${activeTab === 'approved'?'active':''}`} onClick={() => {
+                    <li className={`${activeTab === 'approved' ? 'active' : ''}`} onClick={() => {
                         setActiveTab('approved')
                         setAppointments(approvedAppointments)
                     }}>Approved <span className="count">{approvedAppointments.length}</span></li>
-                    <li className={`${activeTab === 'rejected'?'active':''}`} onClick={() => {
+                    <li className={`${activeTab === 'rejected' ? 'active' : ''}`} onClick={() => {
                         setActiveTab('rejected')
                         setAppointments(rejectedAppointments)
                     }}>Rejected <span className="count">{rejectedAppointments.length}</span></li>

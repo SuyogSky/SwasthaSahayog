@@ -12,7 +12,8 @@ import LoginPage from './views/UserAccounts/Login/Login'
 // import NavBar from "./views/NavBar"
 import NavBar from './views/NavBar/NavBar'
 import ClientProfile from './views/Profile/ClientProfile/ClientProfile'
-import Posts from './views/Forum/Post/Posts'
+// import Posts from './views/Forum/Post/Posts'
+import Posts from './views/Posts/Posts'
 import AddPost from './views/Forum/Post/AddPost'
 import RegisterDoctor from './views/UserAccounts/RegisterDoctor/RegisterDoctor'
 import DoctorProfile from './views/Profile/DoctorProfile/DoctorProfile'
@@ -24,6 +25,7 @@ import ClientProfileSettings from './views/ClientProfileSettings/ClientProfileSe
 import BookAppointment from './views/BookAppointment/BookAppointment'
 import Dashboard from './views/DoctorProfileSettings/Dashboard/Dashboard'
 import ChatComponent from './Components/ChatComponent'
+import PostDetail from './views/Posts/PostDetail/PostDetail'
 
 function App() {
   // const { user } = useContext(AuthContext)
@@ -72,7 +74,9 @@ function App() {
                   null
             } path="/user-profile/:id" exact />
           )}
+          
           <PrivateRoute component={Posts} path="/posts" exact />
+          <PrivateRoute component={PostDetail} path="/post-detail/:post_id" />
 
 
 

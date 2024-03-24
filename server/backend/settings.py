@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'post',
     'appointment',
     'chat',
+    'reviews',
     
     'psycopg2',
     'rest_framework',

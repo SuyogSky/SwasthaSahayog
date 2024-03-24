@@ -160,9 +160,10 @@
                                 }
                             }
     
-                            input:checked~label,
+                            input:checked~label
                             // label:hover,
-                            label:hover~label {
+                            // label:hover~label 
+                            {
                                 color: rgb(198, 168, 0);
                                 transition: color 0.3s;
                             }

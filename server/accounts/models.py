@@ -64,13 +64,27 @@ class Client(BaseUser):
 
 class Doctor(BaseUser):
     region_of_service = models.CharField(max_length=200, null=True, blank=True)#
-    medical_license = models.ImageField(upload_to=license_image_path, null=True, blank=True)
+    medical_license = models.ImageField(upload_to=license_image_path, null=True, blank=True)#
     opening_time = models.TimeField(blank=True, null=True)
     closing_time = models.TimeField(blank=True, null=True)
+    service_charge = models.IntegerField(blank=True, null=True)
     speciality = models.CharField(max_length=100, blank=True, null=True)
     home_checkup_service = models.BooleanField(default=False, null=True, blank=True)#
     medical_background = models.TextField(max_length=300, blank=True, null=True)#
-    is_verified = models.BooleanField(default=False)#
+    is_verified = models.BooleanField(default=False)
+
+    # region_of_service, medical_license, , 
+
+    DURATIONS = [
+        (10, 10),
+        (20, 20),
+        (30, 30),
+        (40, 40),
+        (50, 50),
+        (60, 60),
+    ]
+    appointment_duration = models.IntegerField(default=30, choices=DURATIONS)
+    
     class Meta:
         verbose_name = "Doctor"
         verbose_name_plural = "Doctors"

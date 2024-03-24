@@ -16,10 +16,12 @@ import { IoMail } from "react-icons/io5";
 import EmptyProfile from '../../assets/Images/empty-profile.jpeg'
 import { useHistory, useLocation } from 'react-router-dom/cjs/react-router-dom.min';
 import ip from '../../ip';
+import useAxios from '../../utils/useAxios';
 
 function NavBar() {
     const location = useLocation();
     const history = useHistory()
+    const axios = useAxios()
     const isActiveLink = (path) => {
         return location.pathname === path;
     };
@@ -42,20 +44,19 @@ function NavBar() {
 
     const [loggedInUser, setLoggedInUser] = useState()
     const fetchUserData = () => {
-        fetch(`${ip}/api/user/${user.user_id}/`, {
-            method: 'GET',
+        axios.get(`${ip}/api/user/${user.user_id}/`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            }
+            },
         })
-            .then(response => response.json())
-            .then(data => {
-                setLoggedInUser(data);
-                sessionStorage.setItem('loggedInUser', JSON.stringify(data))
+            .then(response => {
+                setLoggedInUser(response.data);
+                sessionStorage.setItem('loggedInUser', JSON.stringify(response.data));
+                localStorage.setItem('loggedInUser', JSON.stringify(response.data));
             })
             .catch(error => console.error('Error fetching client details:', error));
-    }
+    };
 
     useEffect(() => {
         if (sessionStorage.getItem('currentUser')) {
@@ -68,7 +69,7 @@ function NavBar() {
     useEffect(() => {
         const handleScroll = () => {
             const scrollY = window.scrollY;
-            if (scrollY > 100) {
+            if (scrollY > 50) {
                 setIsScrolled(true);
             }
             else if (scrollY == 0) {
@@ -152,6 +153,7 @@ function NavBar() {
                                             {/* Add sub-menu items here */}
                                             <li><Link to="/client/dashboard" className={isActiveLink('/client/') ? 'active' : ''}>Dashboard</Link></li>
                                             <li><Link to='/client/appointments' className={isActiveLink('/client/appointments') ? 'active' : ''}>Appointments</Link></li>
+                                            <li><Link to='/client/chat' className={isActiveLink('/client/chat') ? 'active' : ''}>Chat</Link></li>
                                             <li><Link to="/client/edit-profile" className={isActiveLink('/client/edit-profile') ? 'active' : ''}>Profile Settings</Link></li>
                                         </ul>
                                     )}

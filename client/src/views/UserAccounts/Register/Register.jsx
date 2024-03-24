@@ -40,32 +40,32 @@ function Register() {
                     <p>Create an account.</p>
 
                     <div className="full-name">
-                        <input type="text" placeholder='Full Name' onChange={e => setUserName(e.target.value)} />
+                        <input type="text" required placeholder='Full Name' onChange={e => setUserName(e.target.value)} />
                         <IoMdPerson />
                     </div>
 
                     <div className="email">
-                        <input type="email" placeholder='Email Address' onChange={e => setEmail(e.target.value)} />
+                        <input type="email" required placeholder='Email Address' onChange={e => setEmail(e.target.value)} />
                         <MdEmail />
                     </div>
 
                     <div className="phone">
-                        <input type="number" placeholder='Phone Number' onChange={e => setPhone(e.target.value)} />
+                        <input type="number" minLength="10" maxLength="10" required placeholder='Phone Number' onChange={e => setPhone(e.target.value)} />
                         <FaPhone />
                     </div>
 
                     <div className="city">
-                        <input type="text" placeholder='Address' onChange={e => setCity(e.target.value)} />
+                        <input type="text" required placeholder='Address' onChange={e => setCity(e.target.value)} />
                         <FaLocationCrosshairs />
                     </div>
 
                     <div className="password">
-                        <input type="password" placeholder='Password' onChange={e => setPassword(e.target.value)} />
+                        <input type="password" required placeholder='Password' onChange={e => setPassword(e.target.value)} />
                         <PiPasswordBold />
                     </div>
 
                     <div className="confirm-password">
-                        <input type="password" placeholder='Confirm Password' onChange={e => setPassword2(e.target.value)} />
+                        <input type="password" required placeholder='Confirm Password' onChange={e => setPassword2(e.target.value)} />
                         <PiPasswordDuotone />
                     </div>
 

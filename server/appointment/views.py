@@ -4,24 +4,107 @@ from appointment.models import *
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from appointment.serializer import *
+from rest_framework.generics import CreateAPIView
 
-class AppointmentListCreateView(generics.ListCreateAPIView):
+# class AppointmentListCreateView(generics.ListCreateAPIView):
+#     queryset = Appointment.objects.all()
+#     serializer_class = AppointmentSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     def perform_create(self, serializer):
+#         # Associate the currently logged-in user with the appointment
+#         user = self.request.user
+#         date = self.request.data.get('date', None)
+#         time = self.request.data.get('time', None)
+#         comments = self.request.data.get('comments', None)
+#         doctor = Doctor.objects.get(id=self.request.data.get('doctor'))
+
+#         # Uncomment the next line to save the appointment with the associated doctor
+#         serializer.save(client=user, doctor=doctor, date=date, time=time, comments=comments)
+
+
+class IsClient(IsAuthenticated):
+    def has_permission(self, request, view):
+        return super().has_permission(request, view) and request.user.role == 'client'
+    
+class IsDoctor(IsAuthenticated):
+    def has_permission(self, request, view):
+        return super().has_permission(request, view) and request.user.role == 'doctor'
+    
+
+class AppointmentListCreateView(CreateAPIView):
     queryset = Appointment.objects.all()
+    serializer_class = AppointmentSerializer
+    permission_classes = [IsAuthenticated, IsClient]
+
+    def post(self, request, *args, **kwargs):
+        # Associate the currently logged-in user with the appointment
+        user = request.user
+        date = request.data.get('date', None)
+        time = request.data.get('time', None)
+        comments = request.data.get('comments', None)
+        doctor = Doctor.objects.get(id=request.data.get('doctor'))
+
+        # Check if there is any approved appointment with the same date and time
+        existing_appointment = Appointment.objects.filter(
+            date=date,
+            time=time,
+            status='approved'
+        ).exists()
+
+        if not existing_appointment:
+            # No approved appointment with the same date and time
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(client=user, doctor=doctor, date=date, time=time, comments=comments)
+            headers = self.get_success_headers(serializer.data)
+            return Response(
+                {
+                    'success': 1,
+                    'message': 'Appointment Scheduled.'
+                },
+                status=status.HTTP_201_CREATED,
+                headers=headers
+            )
+        else:
+            # An approved appointment already exists at the specified date and time
+            return Response(
+                {
+                    'success': 0,
+                    'message': 'This time is already booked.'
+                },
+                # status=status.HTTP_400_BAD_REQUEST
+            )
+
+class ApprovedAppointmentTimeListView(generics.ListAPIView):
     serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        # Associate the currently logged-in user with the appointment
-        user = self.request.user
-        date = self.request.data.get('date', None)
-        time = self.request.data.get('time', None)
-        comments = self.request.data.get('comments', None)
-        doctor = Doctor.objects.get(id=self.request.data.get('doctor'))
+    def get_queryset(self):
+        # Get the appointment date from the query parameters
+        appointment_date = self.request.query_params.get('appointment_date')
 
-        # Uncomment the next line to save the appointment with the associated doctor
-        serializer.save(client=user, doctor=doctor, date=date, time=time, comments=comments)
+        if not appointment_date:
+            return Response(
+                {'error': 'Appointment date is required in the query parameters.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
+        # Filter appointments based on date and status
+        queryset = Appointment.objects.filter(
+            date=appointment_date,
+            status='approved'
+        )
 
+        # Extract only the time from the appointments
+        appointment_times = [appointment.time for appointment in queryset]
+
+        return appointment_times
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        return Response(queryset, status=status.HTTP_200_OK)
+    
 class DoctorAppointmentsListView(generics.ListAPIView):
     serializer_class = AppointmentSerializer
     permission_classes = [IsAuthenticated]
@@ -31,7 +114,7 @@ class DoctorAppointmentsListView(generics.ListAPIView):
         doctor = self.request.user.doctor
 
         # Filter appointments for the logged-in doctor
-        queryset = Appointment.objects.filter(doctor=doctor).order_by('-date', '-time')
+        queryset = Appointment.objects.filter(doctor=doctor).order_by('date', 'time')
         return queryset
 
 

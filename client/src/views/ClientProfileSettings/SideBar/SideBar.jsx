@@ -102,7 +102,7 @@ function SideBar({ clientData }) {
           <li><Link to='/client/edit-profile' className={isActiveLink('/client/edit-profile') ? 'active' : ''}><MdOutlineManageAccounts />Profile Settings</Link></li>
           <li><Link to='/'><FaHeartbeat />Patients</Link></li>
           <li><Link to='/'><MdOutlineFeedback />Patient Reviews</Link></li>
-          <li><Link to='/'><IoChatbubbleEllipsesOutline />Chat</Link></li>
+          <li><Link to='/client/chat'><IoChatbubbleEllipsesOutline />Chat</Link></li>
           <li><Link to='/'><BiLogOutCircle />Logout</Link></li>
         </ul>
       </div>

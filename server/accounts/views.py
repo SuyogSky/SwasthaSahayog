@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 
 from django.http import JsonResponse
-
+from django.contrib.auth.hashers import check_password
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -163,13 +163,60 @@ class DoctorProfileEditView(generics.RetrieveUpdateDestroyAPIView):
             user.bio = request.data.get('bio')
             user.opening_time = request.data.get('opening_time')
             user.closing_time = request.data.get('closing_time')
+            user.appointment_duration = request.data.get('appointment_duration')
+            user.service_charge = request.data.get('service_charge')
             user.speciality = request.data.get('speciality')
 
             user.save()
             return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        
+
+# class MedicalBackgroundEditView(generics.RetrieveUpdateDestroyAPIView):
+#     def patch(self, request, user_id, *args, **kwargs):
+#         user = get_object_or_404(Doctor, id=user_id)
+#         try:
+#             user.home_checkup_service = request.data.get('home_checkup_service')
+#             # if(request.data.get('medical_license')):
+#             user.medical_license = request.data.get('medical_license')
+#             user.medical_background = request.data.get('medical_background')
+#             user.save()
+#             return Response({'message': 'Medical Background updated successfully'}, status=status.HTTP_200_OK)
+#         except Exception as e:
+#             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+
+
+class MedicalBackgroundEditView(generics.RetrieveUpdateDestroyAPIView):
+    def patch(self, request, user_id, *args, **kwargs):
+        user = get_object_or_404(Doctor, id=user_id)
+        serializer = DoctorSerializer(user, data=request.data, partial=True)  # Initialize serializer with instance and data
+        if serializer.is_valid():
+            serializer.save()  # Save serializer if valid
+            return Response({'message': 'Medical Background updated successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 
 
     
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+    serializer_class = ChangePasswordSerializer
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = self.request.user
+
+        old_password = serializer.validated_data.get('old_password')
+        new_password = serializer.validated_data.get('new_password')
+
+        if check_password(old_password, user.password):
+            user.set_password(new_password)
+            user.save()
+            return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'old_password': ['Incorrect password.']}, status=status.HTTP_400_BAD_REQUEST)

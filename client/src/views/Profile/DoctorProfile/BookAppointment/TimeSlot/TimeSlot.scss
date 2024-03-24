@@ -1,0 +1,125 @@
+// 1. Basic styling for the container
+.time-selector{
+    width: 100%;
+    .slot-container{
+      h5{
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+      div{
+        display: grid!important;
+        grid-template-columns: repeat(auto-fill, minmax(100px, auto));
+        gap: 15px;
+        margin-bottom: 30px;
+            button{
+              border: 2px solid var(--main-color);
+              font-weight: 500;
+              padding: 5px 0;
+              border-radius: 8px;
+              background: none;
+              color: var(--main-color);
+              outline: none;
+              &:hover{
+                background-color: var(--main-color-light);
+              }
+              &.selected{
+                background-color: var(--main-color);
+                color: white;
+              }
+            }
+        }
+    }
+}
+.appointment-scheduler {
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  
+    h6 {
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+  
+    > div {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+  
+      div {
+        flex: 1;
+  
+        h5 {
+          font-size: 16px;
+          margin-bottom: 10px;
+        }
+  
+        button {
+          display: block;
+          width: 100%;
+          padding: 10px;
+          margin-bottom: 8px;
+          background-color: #3498db;
+          color: #fff;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+  
+          &:hover {
+            background-color: #2980b9;
+          }
+        }
+      }
+    }
+  
+    p {
+      margin-top: 15px;
+      font-size: 16px;
+    }
+  }
+  
+  // 2. Styling for the selected time
+  .selected-time {
+    margin-top: 15px;
+    font-size: 16px;
+    color: #27ae60;
+  }
+  
+  // 3. Styling for the date selector
+  .date-selector {
+    margin-top: 20px;
+  
+    label {
+      font-size: 16px;
+      display: block;
+      margin-bottom: 10px;
+    }
+  
+    .date-cards-container {
+      display: flex;
+      gap: 10px;
+    }
+  }
+  
+  // 4. Styling for individual date cards
+  .date-card {
+    background-color: #ecf0f1;
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  
+    &:hover {
+      background-color: #d5d8dc;
+    }
+  }
+  
+  // 5. Styling for the current month
+  .current-month {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #2c3e50;
+  }
+  

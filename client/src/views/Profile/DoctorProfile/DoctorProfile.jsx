@@ -17,6 +17,10 @@ import { IoEyeOutline } from "react-icons/io5";
 import { RiFullscreenFill } from "react-icons/ri";
 import Loading from "../../Loading/Loading";
 import useAxios from "../../../utils/useAxios";
+import TimeSlot from "./BookAppointment/TimeSlot/TimeSlot";
+import AddPostForm from "../../Posts/AddPostForm/AddPostForm";
+import Reviews from "./Reviews/Reviews";
+import BookAppointment from "./BookAppointment/BookAppointment";
 
 const swal = require('sweetalert2')
 const truncateWords = (text, numWords) => {
@@ -24,8 +28,10 @@ const truncateWords = (text, numWords) => {
     return words.slice(0, numWords).join(' ') + (words.length > numWords ? ' ...' : '');
 };
 
+
 const DoctorProfile = ({ id }) => {
     const axios = useAxios()
+    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'))
 
     let { user } = useContext(AuthContext)
     const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'))
@@ -34,29 +40,28 @@ const DoctorProfile = ({ id }) => {
     const [loading, setLoading] = useState(false)
     // Fetch client details from the backend API using the client ID
     const fetchDoctorData = () => {
-        fetch(`${ip}/api/doctor-profile/${id}/`, {
-            method: 'GET',
+        axios.get(`${ip}/api/doctor-profile/${id}/`, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('token')}`,
-            }
+            },
         })
-            .then(response => response.json())
-            .then(data => {
-                setDoctorData(data)
-                setBioText(data.bio || 'Not Set')
-                setProfilePicture(data.image || null)
-                console.log("This is profiles data: ", data)
-                console.log("This is current user data: ", user)
-                console.log('is same: ', user)
-                setIsCurrentUser(localStorage.getItem('currentUser') == data.email)
-                setFormUserName(data.username)
-                setFormPhone(data.phone)
-                setFormAddress(data.address)
-                setFormDOB(data.date_of_birth)
+            .then(response => {
+                const data = response.data;
+                setDoctorData(data);
+                setBioText(data.bio || 'Not Set');
+                setProfilePicture(data.image || null);
+                console.log("This is profiles data: ", data);
+                console.log("This is current user data: ", user);
+                console.log('is same: ', user);
+                setIsCurrentUser(currentUser.email === data.email);
+                setFormUserName(data.username);
+                setFormPhone(data.phone);
+                setFormAddress(data.address);
+                setFormDOB(data.date_of_birth);
             })
             .catch(error => console.error('Error fetching client details:', error));
-    }
+    };
     const [doctorData, setDoctorData] = useState(null);
     useEffect(() => {
         fetchDoctorData()
@@ -65,62 +70,12 @@ const DoctorProfile = ({ id }) => {
 
     const [appointments, setAppointments] = useState()
     // ========== Book Appointment ===========
-    const [appointmentDate, setAppointmentDate] = useState()
-    const [appointmentTime, setAppointmentTime] = useState()
-    const [appointmentComment, setAppointmentComment] = useState()
-    const bookAppointment = async (e) => {
-        e.preventDefault();
+    
 
-        const newAppointment = {
-            doctor: doctorData.id,  // Replace with the actual doctor ID
-            date: appointmentDate,  // Replace with the actual date
-            time: appointmentTime,  // Replace with the actual time
-            comments: appointmentComment,  // Replace with the actual comments
-            status: 'pending',
-        };
-        console.log(newAppointment)
+    // const [appointmentDate, setAppointmentDate] = useState('');
 
-        try {
-            const response = await axios.post(`${ip}/appointment/`, newAppointment, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem("token")}`,
-                },
-            });
 
-            if (response.status === 201) {
-                const responseData = response.data;
-                console.log('Appointment added successfully:', responseData);
-                swal.fire({
-                    title: "Appointment Scheduled.",
-                    icon: "success",
-                    toast: true,
-                    timer: 3000,
-                    position: "top-right",
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                    showCloseButton: true,
-                });
-                setAppointmentDate('')
-                setAppointmentTime('')
-                setAppointmentComment('')
-            } else {
-                console.error('Error adding Appointment:', response.statusText);
-                swal.fire({
-                    title: "Please add some description.",
-                    icon: "warning",
-                    toast: true,
-                    timer: 3000,
-                    position: "top-right",
-                    timerProgressBar: true,
-                    showConfirmButton: false,
-                    showCloseButton: true,
-                });
-            }
-        } catch (error) {
-            console.error('Error adding post:', error);
-        }
-    };
+
 
     // Edit Bio
     const [isEditing, setEditing] = useState(false);
@@ -201,25 +156,24 @@ const DoctorProfile = ({ id }) => {
 
     const [posts, setPosts] = useState([]);
     const fetchUserPosts = async () => {
-        setLoading(true)
+        setLoading(true);
+
         try {
-            const response = await fetch(`${ip}/forum/user-posts/${id}`, {
-                method: 'GET',
+            const response = await axios.get(`${ip}/forum/user-posts/${id}`, {
                 headers: {
                     'Content-Type': 'application/json',
-                    // Add any authentication headers if needed
                     'Authorization': `Bearer ${localStorage.getItem('token')}`,
                 },
             });
 
-            if (!response.ok) {
+            if (response.status === 200) {
+                const data = response.data;
+                setPosts(data);
+                setLoading(false);
+                console.log("The posts are: ", data);
+            } else {
                 throw new Error(`Failed to fetch posts: ${response.statusText}`);
             }
-
-            const data = await response.json();
-            setPosts(data);
-            setLoading(false);
-            console.log("The posts are: ", data)
         } catch (error) {
             console.error('Error fetching posts:', error);
             // Handle error state as needed
@@ -238,6 +192,7 @@ const DoctorProfile = ({ id }) => {
     const [value, setValue] = useState('');
 
     const handlePostTextareaChange = (e) => {
+        console.log(e.target.value)
         setValue(e.target.value);
         adjustTextareaHeight(e.target);
     };
@@ -269,26 +224,25 @@ const DoctorProfile = ({ id }) => {
     };
 
     const handleAddPost = async (e) => {
-        e.preventDefault()
-        console.log(value, image)
-        console.log(localStorage.getItem('token'))
+        e.preventDefault();
+        console.log(value, image);
+        console.log(localStorage.getItem('token'));
+
         // Prepare the data to be sent to the server
         const postData = new FormData();
         postData.append('content', value);
         postData.append('image', image);
-        console.log(postData)
+
         try {
-            const response = await fetch(`${ip}/forum/posts/`, {
-                method: 'POST',
+            const response = await axios.post(`${ip}/forum/posts/`, postData, {
                 headers: {
                     // 'Content-Type': 'application/json',  // Remove this line when using FormData
                     'Authorization': `Bearer ${localStorage.getItem("token")}`,
                 },
-                body: postData,
             });
 
-            if (response.ok) {
-                const responseData = await response.json();
+            if (response.status === 201) {
+                const responseData = response.data;
                 console.log('Post added successfully:', responseData);
                 swal.fire({
                     title: "Post Uploaded Successfully.",
@@ -300,16 +254,17 @@ const DoctorProfile = ({ id }) => {
                     showConfirmButton: false,
                     showCloseButton: true,
                 });
-                setValue('')
-                setImage('')
-                setImagePreview('')
-                fetchUserPosts()
-                setViewPostForm(false)
+                setValue('');
+                setImage('');
+                setImagePreview('');
+                fetchUserPosts();
+                setViewPostForm(false);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 console.error('Error adding post:', response.statusText);
                 swal.fire({
-                    title: "Please add some content description.",
+                    // title: "Please add some content description.",
+                    title: response.status,
                     icon: "warning",
                     toast: true,
                     timer: 3000,
@@ -332,26 +287,25 @@ const DoctorProfile = ({ id }) => {
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "Yes, delete it!",
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    const response = await fetch(`${ip}/forum/post/${postId}`, {
-                        method: 'DELETE',
+                    const response = await axios.delete(`${ip}/forum/post/${postId}`, {
                         headers: {
-                            'Authorization': `Bearer ${localStorage.getItem("token")}`, // Include your authentication token if needed
+                            'Authorization': `Bearer ${localStorage.getItem("token")}`,
                             'Content-Type': 'application/json',
                         },
                     });
 
-                    if (response.ok) {
+                    if (response.status === 200) {
                         console.log('Post deleted successfully');
                         swal.fire({
                             title: "Deleted!",
                             text: "Your post has been deleted.",
-                            icon: "success"
+                            icon: "success",
                         });
-                        fetchUserPosts()
+                        fetchUserPosts();
                         // Optionally, you can perform additional actions after successful deletion
                     } else {
                         console.error('Error deleting post:', response.statusText);
@@ -502,7 +456,7 @@ const DoctorProfile = ({ id }) => {
         return formattedDate;
     }
 
-    const [activeContent, setActiveContent] = useState()
+    const [activeContent, setActiveContent] = useState('overview')
 
     const clinicLocation = { lat: 123.456, lng: -78.901 }
 
@@ -563,23 +517,28 @@ const DoctorProfile = ({ id }) => {
                                     </ul>
                                 </div>
 
+
                                 <div className="doctor-profile-contents">
+
+                                    {/* ========== OVERVIEW ========== */}
                                     <div className={`content overview ${activeContent === 'overview' ? 'active' : ''}`}>
                                         <h4>Biography of {doctorData.username}</h4>
                                         {doctorData.speciality && <span>Field: {doctorData.speciality}</span>}
-                                        <p>{doctorData.bio}</p>
+                                        <pre>{doctorData.bio}</pre>
 
                                         <h4>Medical Background</h4>
                                         <pre>{doctorData.medical_background}</pre>
                                     </div>
 
 
+                                    {/* ========== CLINIC LOCATION ========== */}
                                     <div className={`content clinic-location ${activeContent === 'clinic-location' ? 'active' : ''}`}>
                                         This is clinic location.
                                     </div>
 
+                                    {/* ========== BOOK APPOINTMENT ========== */}
                                     <div className={`content book-appointment ${activeContent === 'book-appointment' ? 'active' : ''}`}>
-                                        <div className="left">
+                                        {/* <div className="left">
                                             <div className="client-information information">
                                                 <h4>Client Information</h4>
                                                 <div className="info">
@@ -622,16 +581,9 @@ const DoctorProfile = ({ id }) => {
                                         <div className="appointment-form-container">
                                             <h6>Book Appointment Form</h6>
                                             <form action="" onSubmit={bookAppointment}>
-                                                <div className="date">
-                                                    <label htmlFor="date">Appointment Date <span>*</span></label>
-                                                    <input type="date" id="date" onChange={(e) => setAppointmentDate(e.target.value)} value={appointmentDate} />
-                                                </div>
+                                                <DateSelector onSelectDate={handleDateSelection} />
 
-                                                <div className="time">
-                                                    <label htmlFor="time">Appointment Time <span>*</span></label>
-                                                    <input type="time" id="time" onChange={(e) => setAppointmentTime(e.target.value)} value={appointmentTime} />
-                                                </div>
-
+                                                <TimeSlot onSelectTime={handleTimeSelection} selectedDate={appointmentDate} />
                                                 <div className="comment">
                                                     <label htmlFor="comment">Comment</label>
                                                     <textarea name="comment" id="comment" onChange={(e) => setAppointmentComment(e.target.value)} value={appointmentComment}></textarea>
@@ -639,11 +591,12 @@ const DoctorProfile = ({ id }) => {
 
                                                 <button type="submit">Book</button>
                                             </form>
-                                        </div>
+                                        </div> */}
+                                        <BookAppointment doctorData={doctorData} />
                                     </div>
 
                                     <div className={`content reviews ${activeContent === 'reviews' ? 'active' : ''}`}>
-                                        This is reviews.
+                                        <Reviews doctor_id={id} />
                                     </div>
 
                                 </div>
@@ -653,55 +606,7 @@ const DoctorProfile = ({ id }) => {
 
 
                             {viewPostForm && (
-                                <div className="upload-post-form">
-                                    <form action="" onSubmit={handleAddPost}>
-                                        <div className="top">
-                                            <h6>Create Post</h6>
-                                            <RxCross2 onClick={() => setViewPostForm(!viewPostForm)} />
-                                        </div>
-                                        <div className="user-detail">
-                                            <div className="image" style={doctorData ? {
-                                                backgroundImage: `url(${doctorData.image})`,
-                                                backgroundPosition: 'center',
-                                                backgroundSize: 'cover',
-                                                backgroundRepeat: 'no-repeat',
-                                            } : null}>
-
-                                            </div>
-                                            <p>
-                                                <span className="name">{user.username}</span>
-                                                <span className="date">{new Date().toLocaleDateString()}</span>
-                                            </p>
-                                        </div>
-
-                                        <div className="post-content-fields">
-                                            <textarea
-                                                value={value}
-                                                onChange={handlePostTextareaChange}
-                                                placeholder="Write Your Problem..."
-                                            />
-
-                                            <div className="image-upload">
-                                                <label htmlFor="post-image" className="image-field">
-                                                    <input type="file" id="post-image" onChange={handleFileChange} />
-                                                    {
-                                                        imagePreview ?
-                                                            <img src={imagePreview} alt="" srcset="" />
-                                                            :
-                                                            <>
-                                                                <AiOutlineCloudUpload />
-                                                                <p>Upload Image</p>
-                                                            </>
-                                                    }
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <div className="btn-container">
-                                            <button type="submit" className="upload-btn">Post</button>
-                                        </div>
-                                    </form>
-                                </div>
+                                <AddPostForm viewPostForm={viewPostForm} setViewPostForm={setViewPostForm} fetchPosts={fetchUserPosts} />
                             )}
                             {viewFullImage
                                 ?
@@ -726,7 +631,7 @@ const DoctorProfile = ({ id }) => {
                         //     <div className="left">
 
                         //         <div className="bio">
-                        //             <h4 className="top">{isCurrentUser?<>Bio <BiEdit className="edit" onClick={handleEditClick} /></>:<>Biography of Dr. Suyog Shakye</>}</h4>
+                        //             <h4 className="top">{isCurrentUser ? <>Bio <BiEdit className="edit" onClick={handleEditClick} /></> : <>Biography of Dr. Suyog Shakye</>}</h4>
                         //             <div className="bio-container">
                         //                 <textarea
                         //                     ref={textareaRef}

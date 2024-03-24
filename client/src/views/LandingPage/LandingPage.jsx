@@ -21,7 +21,7 @@ function LandingPage() {
     var full_name = decode.full_name
     var image = decode.image
     var role = decode.role
-    localStorage.setItem('loggedInUser', decode)
+    localStorage.setItem('loggedInUser', JSON.stringify(decode))
   }
 
   useEffect(() => {

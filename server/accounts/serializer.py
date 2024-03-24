@@ -73,7 +73,7 @@ class ClientSerializer(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
-        fields = ('id', 'username', 'email', 'phone', 'address', 'image', 'bio', 'role', 'region_of_service', 'medical_license', 'opening_time', 'closing_time', 'speciality', 'home_checkup_service', 'medical_background', 'date_joined', 'is_verified')
+        fields = ('id', 'username', 'email', 'phone', 'address', 'image', 'bio', 'role', 'region_of_service', 'medical_license', 'opening_time', 'closing_time', 'service_charge', 'appointment_duration', 'speciality', 'home_checkup_service', 'medical_background', 'date_joined', 'is_verified')
 
 class PharmacistSerializer(serializers.ModelSerializer):
     class Meta:
@@ -188,7 +188,7 @@ class ClientProfileUpdateSerializer(serializers.ModelSerializer):
 class DoctorProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
-        fields = ['username', 'email', 'phone', 'address', 'opening_time', 'closing_time', 'speciality', 'bio']
+        fields = ['username', 'email', 'phone', 'address', 'opening_time', 'closing_time', 'service_charge', 'appointment_duration', 'speciality', 'bio']
 
 class ProfilePictureSerializer(serializers.ModelSerializer):
     class Meta:
@@ -201,3 +201,25 @@ class VerifiedDoctorListView(ListAPIView):
 
     def get_queryset(self):
         return Doctor.objects.filter(is_verified=True)
+    
+
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    class Meta:
+        model = BaseUser
+        fields = ['old_password', 'new_password']
+
+    def update(self, instance, validated_data):
+        old_password = validated_data.get('old_password')
+        new_password = validated_data.get('new_password')
+
+        # if not instance.check_password(old_password):
+            # raise serializers.ValidationError("Old password is incorrect.")
+
+        instance.set_password(new_password)
+        instance.save()
+
+        return instance

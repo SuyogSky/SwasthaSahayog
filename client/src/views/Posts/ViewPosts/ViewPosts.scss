@@ -1,0 +1,169 @@
+.posts-container {
+    max-width: 600px;
+    width: 600px;
+
+    .add-post {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        width: 100%;
+        background-color: white;
+        padding: 20px;
+        border-radius: 6px;
+        .top{
+            width: 100%;
+            display: flex;
+            gap: 20px;
+            .image {
+                min-width: 50px;
+                min-height: 50px;
+                border-radius: 50%;
+            }
+            button{
+                width: 100%;
+                border-radius: 50px;
+                border: none;
+                outline: none;
+                height: 50px;
+                text-align: left;
+                padding: 0 20px;
+            }
+        }
+    }
+
+
+    .posts {
+        width: 600px;
+        .contents {
+            width: 100%;
+            .content {
+                border: 1px solid rgba(0, 0, 0, 0.2);
+                padding-top: 15px;
+                margin: 20px 0;
+                border-radius: 5px;
+                background-color: white;
+                width: 100%;
+                .top {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    margin-bottom: 15px;
+                    padding: 0 20px;
+
+                    .client-details {
+                        display: flex;
+                        align-items: center;
+                        gap: 20px;
+
+                        .image {
+                            width: 50px;
+                            height: 50px;
+                            border-radius: 50%;
+                            background-color: rgba(0, 0, 0, 0.2);
+                            cursor: pointer;
+                            transition: all 0.5s ease-in-out;
+                        }
+
+                        p {
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: center;
+                            .name {
+                                font-size: 16px;
+                                font-weight: 500;
+                                cursor: pointer;
+                                &:hover{
+                                    text-decoration: underline;
+                                    transition: all 0.2s ease-in-out;
+                                }
+                            }
+                            
+                            .date {
+                                cursor: pointer;
+                                font-size: 13px;
+                                font-weight: 400;
+                                color: rgba(0, 0, 0, 0.5);
+                            }
+                        }
+                    }
+
+                    .actions {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 10px;
+
+                        svg {
+                            font-size: 18px;
+                            color: rgba(0, 0, 0, 0.5);
+                            cursor: pointer;
+                        }
+                    }
+                }
+
+                .post-container {
+                    display: flex;
+                    flex-direction: column;
+                    width: 100%;
+
+                    .details {
+                        font-size: 15px;
+                        text-align: left;
+                        padding: 0 20px;
+                        margin-bottom: 10px;
+
+                        .see-more {
+                            background: none;
+                            border: none;
+                            outline: none;
+                            color: #007bff;
+                            cursor: pointer;
+                            display: inline-block;
+                            font-weight: 500;
+                            font-size: 16px;
+
+                            &:hover {
+                                text-decoration: underline;
+                            }
+                        }
+                    }
+
+                    .post-image {
+                        width: 100%;
+                        height: 500px;
+                        background-color: rgba(0, 0, 0, 0.2);
+                    }
+
+                    .comment {
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-top: 1px solid rgba(0, 0, 0, 0.2);
+                        margin: 10px 20px 0 20px;
+
+                        span {
+                            display: flex;
+                            padding: 10px 15px;
+                            align-items: center;
+                            justify-content: center;
+                            gap: 10px;
+                            color: rgba(0, 0, 0, 0.5);
+                            cursor: pointer;
+
+                            &:hover {
+                                background-color: rgba(0, 0, 0, 0.1);
+                            }
+
+                            svg {
+                                font-size: 20px;
+                            }
+
+                            p {
+                                font-size: 16px;
+                                font-weight: 500;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -10,35 +10,43 @@ import ViewAppointments from './ViewAppointments/ViewAppointments'
 import Chat from '../Chat/Chat'
 import Inbox from '../Chat/Inbox/Inbox'
 import SearchUser from '../Chat/SearchUser/SearchUser'
+import useAxios from '../../utils/useAxios'
 
 function ProfileSettings() {
 
     const location = useLocation();
+    const axios = useAxios()
     const isActiveLink = (path) => {
         return location.pathname === path;
-      };
+    };
 
-      const isParentLink = (path) => {
+    const isParentLink = (path) => {
         return location.pathname.includes(path);
-      };
+    };
 
     const [currentUser, setCurrentUser] = useState(JSON.parse(sessionStorage.getItem('currentUser')))
     const [doctorData, setDoctorData] = useState(true)
     const fetchDoctorData = async () => {
-        fetch(`${ip}/api/doctor-profile/${currentUser.user_id}/`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        try {
+            const response = await axios.get(`${ip}/api/doctor-profile/${currentUser.user_id}/`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                },
+            });
+
+            if (!response.status===200) {
+                throw new Error(`Failed to fetch doctor data: ${response.statusText}`);
             }
-        })
-            .then(response => response.json())
-            .then(data => {
-                setDoctorData(data)
-                console.log('doctor detail is: ', data)
-            })
-            .catch(error => console.error('Error fetching client details:', error));
-    }
+
+            const data = response.data;
+            setDoctorData(data);
+            console.log('Doctor detail is:', data);
+        } catch (error) {
+            console.error('Error fetching doctor details:', error);
+            // Handle error state as needed
+        }
+    };
     useEffect(() => {
         if (currentUser) {
             fetchDoctorData()
@@ -46,11 +54,11 @@ function ProfileSettings() {
     }, [])
 
     const areAnyActiveLinks = (paths) => {
-        return paths.some((path) => isActiveLink(path));
+        return paths.some((path) => isActiveLink(path) || isParentLink(path));
     };
 
     return (
-        <section className={`profile-settings-section ${areAnyActiveLinks(['/doctor/appointments', '/doctor/chat'])?'p0':''} ${isParentLink('/doctor/inbox/')?'p0':''}`}>
+        <section className={`profile-settings-section ${areAnyActiveLinks(['/doctor/appointments', '/doctor/chat', '/doctor/search/']) ? 'p0' : ''} ${isParentLink('/doctor/inbox/') ? 'p0' : ''}`}>
             <div className="left">
                 <SideBar doctorData={doctorData} />
             </div>

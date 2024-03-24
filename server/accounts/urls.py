@@ -12,9 +12,11 @@ urlpatterns = [
     path('register/client', views.ClientRegisterView.as_view(), name='auth_register'),
     path('register/doctor', views.DoctorRegisterView.as_view(), name='auth_register'),
     path('register/pharmacist', views.PharmacistRegisterView.as_view(), name='auth_register'),
+    path('change-password/', views.ChangePasswordView.as_view(), name='change_password'),
 
     path('verified-doctors/', views.VerifiedDoctorListView.as_view(), name='doctors'),
     path('edit-doctor-profile/<int:user_id>/', views.DoctorProfileEditView.as_view(), name='update_profile'),
+    path('edit-medical-background/<int:user_id>/', views.MedicalBackgroundEditView.as_view(), name='update_medical_background'),
 
     # Profile view
     path('user/<int:id>/', views.UserDetails.as_view(), name='user-detail'),
