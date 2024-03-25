@@ -105,8 +105,8 @@ export const AuthProvider = ({ children }) => {
                     }),
                 });
 
-                if (response.status === 201) {
-                    history.push("/login");
+                if (response.status === 200) {
+                    // history.push("/login");
                     swal.fire({
                         title: "Registration Successful, Login Now",
                         icon: "success",

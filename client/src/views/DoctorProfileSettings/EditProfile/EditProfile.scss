@@ -299,6 +299,24 @@
         }
     }
 
+    .clinic-location {
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        width: 100%;
+        border-radius: 5px;
+        margin-top: 40px;
+
+        h3 {
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+            font-size: 20px;
+        }
+
+
+        .map-container {
+            padding: 10px 20px;
+        }
+
+    }
 
     .other-details-container {
         margin-top: 40px;
@@ -307,12 +325,13 @@
 
             // flex-direction: column;
             .home-checkup {
-                label.main-label{
+                label.main-label {
                     display: flex;
                     align-items: center;
                     margin-bottom: 10px;
-                    span{
-                        svg{
+
+                    span {
+                        svg {
                             color: var(--main-color);
                             font-size: 24px;
                             margin-left: 10px;
@@ -320,29 +339,33 @@
                         }
                     }
                 }
-                .checkbox-container{
+
+                .checkbox-container {
                     display: flex;
                     flex-direction: row;
                     align-items: center;
                     gap: 10px;
-                    p{
+
+                    p {
                         font-size: 18px;
                         font-weight: 500;
-                        &.active{
+
+                        &.active {
                             color: var(--main-color);
                         }
                     }
                 }
+
                 /* To hide the checkbox */
                 .toggle-checkbox {
                     -webkit-appearance: none;
                     -moz-appearance: none;
                     appearance: none;
                     display: none;
-                  }
-                  
-                  .toggle-switch {
-                    background-color: rgba(0,0,0,0.2);
+                }
+
+                .toggle-switch {
+                    background-color: rgba(0, 0, 0, 0.2);
                     width: 60px;
                     height: 32px;
                     border-radius: 16px;
@@ -350,9 +373,9 @@
                     transition: 0.3s;
                     cursor: pointer;
                     transform: scale(0.7);
-                  }
-                  
-                  .toggle-switch::before {
+                }
+
+                .toggle-switch::before {
                     content: "";
                     font-weight: 900;
                     background-color: white;
@@ -367,27 +390,29 @@
                     align-items: center;
                     color: #ddd;
                     transition: 0.3s;
-                  }
-                  
-                  .toggle-checkbox:checked+.toggle-switch {
+                }
+
+                .toggle-checkbox:checked+.toggle-switch {
                     background-color: var(--main-color);
-                  }
-                  
-                  .toggle-checkbox:checked+.toggle-switch::before {
+                }
+
+                .toggle-checkbox:checked+.toggle-switch::before {
                     content: "";
                     left: 31px;
                     color: var(--main-color);
-                  }
+                }
 
             }
-            .imege-upload{
+
+            .imege-upload {
                 display: flex;
                 align-items: center;
                 gap: 10px;
                 justify-content: space-between;
                 flex-direction: row;
                 width: 100%;
-                input{
+
+                input {
                     margin: 0;
                     padding: 0;
                     display: flex;
@@ -396,7 +421,8 @@
                     border: none;
                     padding-top: 5px;
                 }
-                button{
+
+                button {
                     width: 150px;
                     height: 100%;
                     outline: none;
@@ -404,20 +430,24 @@
                     font-weight: 500;
                     border-radius: 6px;
                 }
-                button[type='button']{
+
+                button[type='button'] {
                     border: 2px solid var(--main-color);
                     color: var(--main-color-dark);
                     cursor: pointer;
-                    &:hover{
+
+                    &:hover {
                         background-color: var(--main-color-light);
                     }
                 }
-                button[type='disabled']{
-                    border: 2px solid rgba(0,0,0,0.4);
-                    color: rgba(0,0,0,0.4);
+
+                button[type='disabled'] {
+                    border: 2px solid rgba(0, 0, 0, 0.4);
+                    color: rgba(0, 0, 0, 0.4);
                     cursor: not-allowed;
-                    &:hover{
-                        background-color: rgba(0,0,0,0.1);
+
+                    &:hover {
+                        background-color: rgba(0, 0, 0, 0.1);
                     }
                 }
             }
@@ -453,10 +483,11 @@
             flex-direction: column;
             padding: 10px 30px;
 
-            label.error{
+            label.error {
                 color: rgb(240, 48, 48);
                 font-weight: 500;
             }
+
             input {
                 width: 100%;
                 height: 40px;
@@ -466,7 +497,8 @@
                 outline: none;
                 color: rgba(0, 0, 0, 0.7);
                 margin-bottom: 25px;
-                &.error{
+
+                &.error {
                     border: 1px solid rgb(240, 48, 48);
                 }
             }

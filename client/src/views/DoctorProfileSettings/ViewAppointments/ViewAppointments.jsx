@@ -4,10 +4,12 @@ import { IoEyeOutline } from "react-icons/io5";
 import { RxCrossCircled } from "react-icons/rx";
 import ip from '../../../ip';
 import useAxios from '../../../utils/useAxios';
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 const swal = require('sweetalert2')
 
 function ViewAppointments() {
     const axios = useAxios()
+    const history = useHistory()
 
 
     const [appointments, setAppointments] = useState([]);
@@ -37,6 +39,7 @@ function ViewAppointments() {
             }
 
             const data = response.data;
+            console.log(data)
             setAppointments(data);
             setAllAppointments(data);
             setLoading(false);
@@ -125,6 +128,17 @@ function ViewAppointments() {
 
 
 
+    function calculateAge(dateOfBirth) {
+        const dob = new Date(dateOfBirth);
+        const now = new Date();
+        let age = now.getFullYear() - dob.getFullYear();
+        const monthDiff = now.getMonth() - dob.getMonth();
+        if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < dob.getDate())) {
+            age--;
+        }
+        return age;
+    }
+
     return (
         <div className='view-doctor-appointments'>
             <div className="tab-bar-container">
@@ -167,9 +181,19 @@ function ViewAppointments() {
                             return (
                                 <tr>
                                     <td>{index + 1}</td>
-                                    <td>{appointment.client.username}</td>
-                                    <td>{appointment.client.age}</td>
-                                    <td>{appointment.client.gender}</td>
+                                    <td className='username'>
+                                        <div className="image" style={appointment.client ? {
+                                            backgroundImage: `url(${appointment.client.image})`,
+                                            backgroundPosition: 'center',
+                                            backgroundSize: 'cover',
+                                            backgroundRepeat: 'no-repeat',
+                                        } : null} onClick={() => history.push(`/profile/${appointment.client.id}`)}>
+
+                                        </div>
+                                        <p onClick={() => history.push(`/profile/${appointment.client.id}`)}>{appointment.client.username}</p>
+                                    </td>
+                                    <td>{appointment.client.date_of_birth ? calculateAge(appointment.client.date_of_birth) : <span>Null</span>}</td>
+                                    <td>{appointment.client.gender?appointment.client.gender:<span>Null</span>}</td>
                                     <td className={`status ${appointment.status}`}><p>{capitalizeFirstLetter(appointment.status)}</p></td>
                                     <td>{appointment.date}</td>
                                     <td>{appointment.time}</td>

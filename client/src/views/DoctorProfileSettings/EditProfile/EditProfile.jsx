@@ -9,7 +9,7 @@ import './EditProfile.scss'
 import ip from '../../../ip';
 import useAxios from '../../../utils/useAxios';
 import { LuInfo } from "react-icons/lu";
-
+import Map from './Location/Map';
 const swal = require('sweetalert2')
 function EditDoctorProfile({ doctorData, fetchDoctorData }) {
 
@@ -361,7 +361,7 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
           setChangePWLoading(false)
         }
       }
-      else{
+      else {
         swal.fire({
           title: "Password Confirmation didn't matched.",
           icon: "error",
@@ -374,7 +374,7 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
         });
       }
     }
-    else{
+    else {
       swal.fire({
         title: "Password field cannot be empty.",
         icon: "warning",
@@ -563,11 +563,21 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
                   </form>
                 </div>
 
+
+                <div className="clinic-location">
+                  <h3>Clinic Location:
+
+                  </h3>
+                  <div className="map-container">
+                    <Map doctor={doctorData} />
+                  </div>
+                </div>
+
                 <div className="change-passowrd-container">
                   <h3>Change Password:</h3>
                   <form action="" onSubmit={handleChangePassword}>
-                    <label htmlFor="old-password" className={error?'error':''}>Old Password</label>
-                    <input type="password" id='old-password' className={error?'error':''} value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
+                    <label htmlFor="old-password" className={error ? 'error' : ''}>Old Password</label>
+                    <input type="password" id='old-password' className={error ? 'error' : ''} value={oldPassword} onChange={(e) => setOldPassword(e.target.value)} />
 
                     <label htmlFor="new-password">New Password</label>
                     <input type="password" id='new-password' value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />

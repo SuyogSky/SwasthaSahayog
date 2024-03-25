@@ -5,8 +5,9 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework import serializers
 from rest_framework.generics import ListAPIView
 
-
-    
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from .helpers import *
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -62,7 +63,6 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
-    
 
 
 class ClientSerializer(serializers.ModelSerializer):
@@ -73,7 +73,7 @@ class ClientSerializer(serializers.ModelSerializer):
 class DoctorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Doctor
-        fields = ('id', 'username', 'email', 'phone', 'address', 'image', 'bio', 'role', 'region_of_service', 'medical_license', 'opening_time', 'closing_time', 'service_charge', 'appointment_duration', 'speciality', 'home_checkup_service', 'medical_background', 'date_joined', 'is_verified')
+        fields = ('id', 'username', 'email', 'phone', 'address', 'image', 'bio', 'role', 'clinic_location', 'medical_license', 'opening_time', 'closing_time', 'service_charge', 'appointment_duration', 'speciality', 'home_checkup_service', 'medical_background', 'date_joined', 'is_verified')
 
 class PharmacistSerializer(serializers.ModelSerializer):
     class Meta:
@@ -96,6 +96,14 @@ class ClientRegisterSerializer(serializers.ModelSerializer):
         model = Client
         fields = ('email', 'username', 'phone' , 'address', 'password', 'password2')
 
+    def validate_email(self, email):
+        try:
+            validate_email(email)
+        except ValidationError:
+            raise serializers.ValidationError("Please enter a valid email address.")
+        
+        return email
+
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
             raise serializers.ValidationError(
@@ -114,6 +122,7 @@ class ClientRegisterSerializer(serializers.ModelSerializer):
 
         user.set_password(validated_data['password'])
         user.save()
+        send_otp_to_email(user.email, user)
 
         return user
     

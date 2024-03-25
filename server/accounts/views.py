@@ -14,6 +14,9 @@ from django.shortcuts import get_object_or_404
 
 from django.http import JsonResponse
 from django.contrib.auth.hashers import check_password
+from .helpers import *
+
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -53,6 +56,60 @@ class ClientRegisterView(generics.CreateAPIView):
     queryset = Client.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = ClientRegisterSerializer
+
+class NewRegisterView(APIView):
+    def post(self, request):
+        try:
+            serializer = ClientRegisterSerializer(data = request.data)
+            if not serializer.is_valid():
+                return Response({
+                    'status': 403,
+                    'error': serializer.errors
+                })
+            
+            serializer.save()
+
+            return Response({'status': 200, 'message': 'An OTP has been sent in your email.'})
+        except Exception as e:
+            print(e)
+            return Response({'status': 404, 'error': 'Something went wrong.'})
+
+class VerifyOtp(APIView):
+    def post(self, request):
+        try:
+            data = request.data
+
+            user_obj = BaseUser.objects.get(email = data.get('email'))
+            otp = data.get('otp')
+
+            if user_obj.otp == otp:
+                user_obj.is_email_verified = True
+                user_obj.save()
+                return Response({'status': 200, 'message': 'Your OTP is Verified.'})
+
+            return Response({'status': 403, 'error': 'Your OTP is incorrect.'})
+
+        except Exception as e:
+            print(e)
+        return Response({'status': 404, 'error': 'Something went wromg.'})
+
+    def patch(self, request):
+        try:
+            data = request.data
+            user_obj = BaseUser.objects.filter(email=data.get('email'))
+            
+            if not BaseUser.objects.filter(email = data.get('email')).exists():
+                return Response({'status': 404, 'error': 'No user found!'})
+
+            if send_otp_to_email(data.get('email'), user_obj[0]):
+                return Response({'status': 200, 'message': 'New OTP sent.'})
+
+            return Response({'status': 403, 'error': 'Try after few seconds.'})
+        except Exception as e:
+            print(e)
+        return Response({'status': 404, 'error': 'Something went wrong.'})
+
+
 
 class DoctorRegisterView(generics.CreateAPIView):
     queryset = Doctor.objects.all()
@@ -197,6 +254,31 @@ class MedicalBackgroundEditView(generics.RetrieveUpdateDestroyAPIView):
             return Response({'message': 'Medical Background updated successfully'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+
+class ClinicLocationUpdateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def patch(self, request, pk):
+        try:
+            doctor = Doctor.objects.get(id=pk)
+        except Doctor.DoesNotExist:
+            return Response({"error": "Doctor not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Extract the clinic_location from the request data
+        clinic_location = request.data.get('clinic_location')
+        
+        # Validate the clinic_location
+        if not clinic_location:
+            return Response({"error": "clinic_location is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Update the clinic_location field
+        doctor.clinic_location = clinic_location
+        doctor.save()
+        
+        # Serialize the updated doctor instance
+        serializer = DoctorSerializer(doctor)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 
 

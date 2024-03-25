@@ -1,0 +1,68 @@
+[
+    {
+      "city": "Mumbai",
+      "admin": "Maharashtra",
+      "country": "India",
+      "population_proper": 12442373,
+      "iso2": "IN",
+      "capital": "Mumbai",
+      "lat": 19.0760,
+      "lng": 72.8777,
+      "population": 20000000
+    },
+    {
+      "city": "Pune",
+      "admin": "Maharashtra",
+      "country": "India",
+      "population_proper": 3124458,
+      "iso2": "IN",
+      "capital": "Mumbai",
+      "lat": 18.5204,
+      "lng": 73.8567,
+      "population": 6000000
+    },
+    {
+      "city": "Nashik",
+      "admin": "Maharashtra",
+      "country": "India",
+      "population_proper": 1486053,
+      "iso2": "IN",
+      "capital": "Mumbai",
+      "lat": 20.0059,
+      "lng": 73.7613,
+      "population": 2000000
+    },
+    {
+      "city": "Delhi",
+      "admin": "Delhi",
+      "country": "India",
+      "population_proper": 10927986,
+      "iso2": "IN",
+      "capital": "New Delhi",
+      "lat": 28.6139,
+      "lng": 77.2090,
+      "population": 19000000
+    },
+    {
+      "city": "Gurgaon",
+      "admin": "Haryana",
+      "country": "India",
+      "population_proper": 876824,
+      "iso2": "IN",
+      "capital": "New Delhi",
+      "lat": 28.4595,
+      "lng": 77.0266,
+      "population": 2000000
+    },
+    {
+      "city": "Noida",
+      "admin": "Uttar Pradesh",
+      "country": "India",
+      "population_proper": 642381,
+      "iso2": "IN",
+      "capital": "New Delhi",
+      "lat": 28.5355,
+      "lng": 77.3910,
+      "population": 1200000
+    }
+  ]

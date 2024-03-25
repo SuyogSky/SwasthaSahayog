@@ -5,7 +5,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from appointment.serializer import *
 from rest_framework.generics import CreateAPIView
-
+from django.core.mail import send_mail
+from django.conf import settings
 # class AppointmentListCreateView(generics.ListCreateAPIView):
 #     queryset = Appointment.objects.all()
 #     serializer_class = AppointmentSerializer
@@ -39,7 +40,7 @@ class AppointmentListCreateView(CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         # Associate the currently logged-in user with the appointment
-        user = request.user
+        user = request.user.client
         date = request.data.get('date', None)
         time = request.data.get('time', None)
         comments = request.data.get('comments', None)
@@ -147,6 +148,11 @@ class AppointmentApprovalView(generics.UpdateAPIView):
         # Update the appointment status to 'approved'
         appointment.status = 'approved'
         appointment.save()
+
+        client_email = appointment.client.email
+        subject = 'Appointment Approved'
+        message = 'Your appointment has been approved.'
+        send_mail('Appointment Approved', 'Your appointmetn has been approved.', 'settings.EMAIL_HOST_USER', [client_email])
 
         serializer = self.get_serializer(appointment)
         return Response(serializer.data)

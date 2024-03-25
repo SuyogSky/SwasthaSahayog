@@ -3,6 +3,12 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.text import slugify
 import os
 import uuid
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+from django.conf import settings
+
+
 
 def user_image_path(instance, filename):
     return os.path.join("user_images", f"{slugify(instance.email)}_{filename}")
@@ -30,6 +36,9 @@ class BaseUser(AbstractUser):
         ('pharmacist', 'Pharmacist'),
     )
     role = models.CharField(max_length=20, choices=USER_TYPES)
+
+    is_email_verified = models.BooleanField(default=False)
+    otp = models.CharField(max_length=6, null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
@@ -63,7 +72,7 @@ class Client(BaseUser):
     
 
 class Doctor(BaseUser):
-    region_of_service = models.CharField(max_length=200, null=True, blank=True)#
+    clinic_location = models.CharField(max_length=200, null=True, blank=True)#
     medical_license = models.ImageField(upload_to=license_image_path, null=True, blank=True)#
     opening_time = models.TimeField(blank=True, null=True)
     closing_time = models.TimeField(blank=True, null=True)
