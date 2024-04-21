@@ -4,12 +4,16 @@ import { FaAngleDoubleDown } from 'react-icons/fa'
 import { TiTick } from "react-icons/ti";
 
 import './RegisterDoctor.scss'
+import ip from '../../../ip';
 
-
+import { IoShieldCheckmark } from "react-icons/io5";
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import axios from 'axios';
 
 const swal = require('sweetalert2')
 function RegisterDoctor() {
 
+  const history = useHistory()
   const [email, setEmail] = useState("")
   const [username, setUserName] = useState("")
   const [phone, setPhone] = useState("")
@@ -30,31 +34,117 @@ function RegisterDoctor() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if(email, username, phone, city, license, password, password2){
+    if (email, username, phone, city, license, password, password2) {
       if (phone.length !== 10) {
         swal.fire({
-            title: "Please enter a valid phone number.",
-            icon: "warning",
+          title: "Please enter a valid phone number.",
+          icon: "warning",
+          toast: true,
+          timer: 6000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+          showCloseButton: true,
+        });
+      }
+      else if (password === password2) {
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('username', username);
+        formData.append('phone', phone);
+        formData.append('address', city);
+        formData.append('medical_license', license);
+        formData.append('password', password);
+        formData.append('password2', password2);
+
+        try {
+          const response = await fetch(`${ip}/api/register/doctor`, {
+            method: "POST",
+            body: formData,  // No need to set Content-Type
+          });
+
+          console.log('Doctor Registration response: ', response)
+
+          if (response.status === 200) {
+            // history.push("/login");
+            setDisplayOTP(true)
+            swal.fire({
+              title: "An OTP is sent to your mail.",
+              icon: "success",
+              toast: true,
+              timer: 6000,
+              position: "top-right",
+              timerProgressBar: true,
+              showConfirmButton: false,
+              showCloseButton: true,
+              customClass: {
+                container: 'custom-swal-container',
+              }
+            });
+          } else {
+            const errorData = await response.json(); // Parse error response
+            console.log(response.status);
+            console.log("Server error:", errorData.error);
+            if (errorData.error) {
+              swal.fire({
+                title: errorData.error,
+                icon: "error",
+                toast: true,
+                timer: 6000,
+                position: "top-right",
+                timerProgressBar: true,
+                showConfirmButton: false,
+                showCloseButton: true,
+                customClass: {
+                  container: 'custom-swal-container',
+                }
+              });
+            }
+            else if (errorData.error.password) {
+              swal.fire({
+                title: "Please choose stronger password.",
+                icon: "warning",
+                toast: true,
+                timer: 6000,
+                position: "top-right",
+                timerProgressBar: true,
+                showConfirmButton: false,
+                showCloseButton: true,
+                customClass: {
+                  container: 'custom-swal-container',
+                }
+              });
+            }
+            else {
+              swal.fire({
+                title: "Registration Failed",
+                text: errorData.error.detail,
+                icon: "error",
+                toast: true,
+                timer: 6000,
+                position: "top-right",
+                timerProgressBar: true,
+                showConfirmButton: false,
+                showCloseButton: true,
+                customClass: {
+                  container: 'custom-swal-container',
+                }
+              });
+            }
+          }
+        } catch (error) {
+          console.error("Error during registration:", error);
+          swal.fire({
+            title: "An unexpected error occurred",
+            icon: "error",
             toast: true,
             timer: 6000,
             position: "top-right",
             timerProgressBar: true,
             showConfirmButton: false,
             showCloseButton: true,
-        });
-    }
-    else if (password === password2) {
-        const formDataToSend = new FormData();
-        formDataToSend.append('email', email);
-        formDataToSend.append('username', username);
-        formDataToSend.append('phone', phone);
-        formDataToSend.append('address', city);
-        formDataToSend.append('medical_license', license);
-        formDataToSend.append('password', password);
-        formDataToSend.append('password2', password2);
-  
-        console.log(formDataToSend)
-        registerDoctor(email, username, phone, city, license, password, password2)
+          });
+        }
       }
       else {
         swal.fire({
@@ -69,7 +159,7 @@ function RegisterDoctor() {
         })
       }
     }
-    else{
+    else {
       swal.fire({
         title: "Please fill all the fields.",
         icon: "warning",
@@ -79,7 +169,131 @@ function RegisterDoctor() {
         timerProgressBar: true,
         showConfirmButton: false,
         showCloseButton: true,
-    })
+      })
+    }
+  }
+
+
+
+  // for otp
+  const [displayOTP, setDisplayOTP] = useState(false)
+  const [otp, setOtp] = useState(new Array(6).fill(""))
+  const handleOTPChange = (e, index) => {
+    if (isNaN(e.target.value)) return false
+
+    setOtp([
+      ...otp.map((data, indx) => indx === index ? e.target.value : data)
+    ])
+
+    if (e.target.value && e.target.nextSibling) {
+      e.target.nextSibling.focus()
+    }
+    else if (!e.target.value && e.target.previousSibling) {
+      e.target.previousSibling.focus()
+    }
+
+  }
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData('text/plain');
+    if (pasteData.length === 6 && /^\d+$/.test(pasteData)) {
+      const newOtp = pasteData.split('');
+      setOtp(newOtp);
+    }
+  };
+
+  const verifyOTP = async () => {
+    const otpData = new FormData();
+    otpData.append('email', email);
+    otpData.append('otp', otp.join(""));
+
+    try {
+      const response = await axios.post(`${ip}/api/verify-otp/`, otpData);
+
+      if (response.data.status === 200) {
+        const responseData = response.data;
+        console.log('OTP verified:', responseData);
+        swal.fire({
+          title: "Your OTP is Verified",
+          icon: "success",
+          toast: true,
+          timer: 3000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+          showCloseButton: true,
+          customClass: {
+            container: 'custom-swal-container',
+          }
+        });
+        history.push('/login')
+      } else {
+        console.error('Error:', response.statusText);
+        swal.fire({
+          // title: "Please add some content description.",
+          title: response.data.error,
+          icon: "warning",
+          toast: true,
+          timer: 3000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+          showCloseButton: true,
+          customClass: {
+            container: 'custom-swal-container',
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error :', error);
+    }
+  }
+
+
+  const resendOTP = async () => {
+    const otpData = new FormData();
+    otpData.append('email', email);
+
+    try {
+      const response = await axios.patch(`${ip}/api/verify-otp/`, otpData);
+
+      if (response.data.status === 200) {
+        const responseData = response.data;
+        console.log('OTP Resent:', responseData);
+        swal.fire({
+          title: "New OTP Sent in yout mail.",
+          icon: "success",
+          toast: true,
+          timer: 3000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+          showCloseButton: true,
+          customClass: {
+            container: 'custom-swal-container',
+          }
+        });
+        // history.push('/login')
+      } else {
+        console.error('Error:', response.statusText);
+        swal.fire({
+          // title: "Please add some content description.",
+          title: response.data.error,
+          icon: "warning",
+          toast: true,
+          timer: 3000,
+          position: "top-right",
+          timerProgressBar: true,
+          showConfirmButton: false,
+          showCloseButton: true,
+          customClass: {
+            container: 'custom-swal-container',
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error :', error);
     }
   }
 
@@ -123,7 +337,7 @@ function RegisterDoctor() {
             </div>
             <form action="" onSubmit={handleSubmit}>
               <div className="form-top">
-                <h4>Doctor Appointment Registration</h4>
+                <h4>Doctor Registration</h4>
                 <span className="progression-bar" style={{ width: `${calculateCompletionPercentage()}%` }}></span>
               </div>
 
@@ -149,6 +363,32 @@ function RegisterDoctor() {
               <input type="password" id="password2" placeholder="Confirm Password" onChange={(e) => setPassword2(e.target.value)} required />
 
               <button type="submit">Register</button>
+
+              {displayOTP &&
+                <div className="otp-field-container">
+                  <div className="otp-form">
+                    <span className="icon">
+                      <IoShieldCheckmark />
+                    </span>
+                    <h4>Enter OTP Code</h4>
+                    <div className='otp-fields'>
+                      {
+                        otp.map((data, i) => {
+                          return <input type="text"
+                            value={data}
+                            maxLength={1}
+                            onChange={(e) => handleOTPChange(e, i)}
+                            onPaste={(e) => handlePaste(e)}
+                          />
+                        })
+                      }
+                    </div>
+                    <p className='resend-otp'>Didn't get code? <span onClick={resendOTP}>Resend</span></p>
+                    <button type="button" onClick={() => verifyOTP()}>Verify</button>
+                    <button type="button" className='cancle' onClick={() => setDisplayOTP(false)}>Cancle</button>
+                  </div>
+                </div>
+              }
             </form>
           </div>
         </div>

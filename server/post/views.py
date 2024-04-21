@@ -43,6 +43,21 @@ class UserPostsAPIView(APIView):
         serializer = PostSerializer(user_posts, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+
+class PostDeleteAPIView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, post_id):
+        # Retrieve the post object
+        try:
+            post = Post.objects.get(pk=post_id)
+            post.delete()
+        except Post.DoesNotExist:
+            return Response({"error": "Post does not exist"}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response({"success": 1, "message": "Post deleted successfully."})
+
+    
 class AddCommentView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer

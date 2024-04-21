@@ -10,31 +10,48 @@ from django.core.validators import validate_email
 from .helpers import *
 
 
+# class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+#     @classmethod
+#     def get_token(cls, user):
+#         token = super().get_token(user)
+        
+#         # These are claims, you can add custom claims
+#         # token['full_name'] = user.profile.full_name
+#         token['username'] = user.username
+#         token['email'] = user.email
+#         token['role'] = user.role
+#         # token['bio'] = user.profile.bio
+#         # token['image'] = str(user.profile.image)
+#         # token['verified'] = user.profile.verified
+
+#         # if isinstance(user, Client):
+#         #     # Add claims for client
+#         #     token['role'] = 'client'
+#         # elif isinstance(user, Doctor):
+#         #     # Add claims for doctor
+#         #     token['role'] = 'doctor'
+#         # elif isinstance(user, Pharmacist):
+#         #     # Add claims for pharmacist
+#         #     token['role'] = 'pharmacist'
+#         # ...
+#         return token
+
+
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
     @classmethod
     def get_token(cls, user):
         token = super().get_token(user)
-        
-        # These are claims, you can add custom claims
-        # token['full_name'] = user.profile.full_name
         token['username'] = user.username
         token['email'] = user.email
         token['role'] = user.role
-        # token['bio'] = user.profile.bio
-        # token['image'] = str(user.profile.image)
-        # token['verified'] = user.profile.verified
-
-        # if isinstance(user, Client):
-        #     # Add claims for client
-        #     token['role'] = 'client'
-        # elif isinstance(user, Doctor):
-        #     # Add claims for doctor
-        #     token['role'] = 'doctor'
-        # elif isinstance(user, Pharmacist):
-        #     # Add claims for pharmacist
-        #     token['role'] = 'pharmacist'
-        # ...
         return token
+
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        user = self.user
+        if not user.is_email_verified:
+            raise ValidationError("Email is not verified. Please verify your email.")
+        return data
     
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -78,7 +95,7 @@ class DoctorSerializer(serializers.ModelSerializer):
 class PharmacistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pharmacist
-        fields = ('id', 'username', 'email', 'phone', 'address', 'image', 'bio', 'role', 'opening_hours', 'delivery_service', 'pharmacy_license', 'date_joined')
+        fields = ('id', 'username', 'email', 'phone', 'address', 'image', 'bio', 'role', 'pharmacy_location', 'opening_time', 'closing_time', 'delivery_service', 'pharmacy_license', 'date_joined', 'is_verified')
 
 
 class BaseUserSerializer(serializers.ModelSerializer):
@@ -154,6 +171,7 @@ class DoctorRegisterSerializer(serializers.ModelSerializer):
 
         user.set_password(validated_data['password'])
         user.save()
+        send_otp_to_email(user.email, user)
 
         return user
     
@@ -163,7 +181,7 @@ class PharmacistRegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pharmacist
-        fields = ('email', 'username', 'phone' , 'password', 'password2', 'address', 'pharmacy_license', 'opening_hours', 'delivery_service')
+        fields = ('email', 'username', 'phone', 'address', 'pharmacy_license', 'password', 'password2')
 
     def validate(self, attrs):
         if attrs['password'] != attrs['password2']:
@@ -179,16 +197,16 @@ class PharmacistRegisterSerializer(serializers.ModelSerializer):
             phone=validated_data['phone'],
             address=validated_data['address'],
             pharmacy_license=validated_data['pharmacy_license'],
-            opening_hours=validated_data['opening_hours'],
-            delivery_service=validated_data['delivery_service'],
             role='pharmacist'
         )
 
         user.set_password(validated_data['password'])
         user.save()
-
+        send_otp_to_email(user.email, user)
         return user
     
+
+
 class ClientProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Client
@@ -210,6 +228,12 @@ class VerifiedDoctorListView(ListAPIView):
 
     def get_queryset(self):
         return Doctor.objects.filter(is_verified=True)
+
+class VerifiedPharmacyListView(ListAPIView):
+    serializer_class = PharmacistSerializer
+
+    def get_queryset(self):
+        return Pharmacist.objects.filter(is_verified=True)
     
 
 

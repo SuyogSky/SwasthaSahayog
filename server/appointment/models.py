@@ -16,5 +16,6 @@ class Appointment(models.Model):
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
         ('completed', 'Completed'),
+        ('canceled', 'Canceled'),
     ]
     status = models.CharField(max_length=100, choices=APPOINTMENT_STATUS, default='pending')

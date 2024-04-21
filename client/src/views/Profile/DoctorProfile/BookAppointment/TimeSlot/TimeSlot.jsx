@@ -85,7 +85,7 @@ const TimeSlot = ({ onSelectTime, selectedDate='2024-03-09', doctorData  }) => {
 
     const morningOpeningHours = doctorData.opening_time || '00:00:00';
     const eveningClosingHours = doctorData.closing_time ||  '24:00:00';
-    const timeInterval = 30;
+    const timeInterval = doctorData.appointment_duration;
 
     // Generate time slots
     const timeSlots = generateTimeSlots(morningOpeningHours, eveningClosingHours, timeInterval);
@@ -122,7 +122,6 @@ const TimeSlot = ({ onSelectTime, selectedDate='2024-03-09', doctorData  }) => {
                     ))}
                 </div>
             </div>
-            {selectedTime && <p>Selected Time: {selectedTime}</p>}
         </div>
     );
 };

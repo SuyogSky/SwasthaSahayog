@@ -106,17 +106,54 @@ function NavBar() {
                     <li>
                         <Link to={location.pathname} className={areAnyActiveLinks(['/register-doctor', '/doctors', '/book-appointment']) ? 'active' : ''}>Services <FaAngleDown className='down-arrow' /></Link>
                         <ul className="submenu services-sub-menu">
-                            {/* Add sub-menu items here */}
-                            <li>
-                                <Link to='/register-doctor' className={isActiveLink('/register-doctor') ? 'active' : ''} Required>Become a Doctor</Link>
-                            </li>
-                            <li>
-                                <Link to='/doctors' className={isActiveLink('/doctors') ? 'active' : ''} Required>View Doctors</Link>
-                            </li>
-                            <li><Link to="/book-appointment" className={isActiveLink('/book-appointment') ? 'active' : ''}>Book Appointment</Link></li>
-
+                            {
+                                user ?
+                                    <>
+                                        <li>
+                                            <Link to='/doctors' className={isActiveLink('/doctors') ? 'active' : ''} Required>View Doctors</Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/nearby-clinics">Nearby Clinics</Link>
+                                        </li>
+                                        <li>
+                                            <Link to="/nearby-pharmacies">Nearby Pharmacies</Link>
+                                        </li>
+                                    </>
+                                    :
+                                    <>
+                                        <li>
+                                            <Link to='/register-doctor' className={isActiveLink('/register-doctor') ? 'active' : ''} Required>Become a Doctor</Link>
+                                        </li>
+                                        <li>
+                                            <Link to='/register-pharmacy' className={isActiveLink('/register-pharmacy') ? 'active' : ''} Required>Register Pharmacy</Link>
+                                        </li>
+                                    </>
+                            }
                         </ul>
                     </li>
+
+                    {loggedInUser && loggedInUser.role === "client" && (
+                        <li>
+                            <Link to={location.pathname} className={isParentPath('/profile-settings/') ? 'active' : ''}>Pages <FaAngleDown className='down-arrow' /></Link>
+                            <ul className="submenu doctors-sub-menu">
+                                {/* Add sub-menu items here */}
+                                <li>
+                                    <Link to={location.pathname} className={isParentPath('/profile-settings/') ? 'active' : ''} id={!token && 'disabled'} title={!token && `Login Required`} Required>Dashboard <FaChevronRight /></Link>
+                                    {token && loggedInUser && loggedInUser.role === 'client' && (
+                                        <ul className="submenu dashboard-sub-menu">
+                                            {/* Add sub-menu items here */}
+                                            <li><Link to="/client/dashboard" className={isActiveLink('/client/') ? 'active' : ''}>Dashboard</Link></li>
+                                            <li><Link to='/client/appointments' className={isActiveLink('/client/appointments') ? 'active' : ''}>Appointments</Link></li>
+                                            <li><Link to={`/profile/${loggedInUser.id}`} className={isActiveLink(`/profile/${loggedInUser.id}`) ? 'active' : ''}>Profile</Link></li>
+                                            <li><Link to="/client/edit-profile" className={isActiveLink('/client/edit-profile') ? 'active' : ''}>Profile Settings</Link></li>
+                                        </ul>
+                                    )}
+                                </li>
+                                <li><Link to='/client/chat' className={isActiveLink('/client/chat') ? 'active' : ''}>Chat</Link></li>
+                                <li><Link to="/doctors">View Doctors</Link></li>
+                            </ul>
+                        </li>
+                    )}
 
                     {loggedInUser && loggedInUser.role === "doctor" && (
                         <li>
@@ -131,6 +168,7 @@ function NavBar() {
                                             <li><Link to="/doctor/dashboard" className={isActiveLink('/doctor/') ? 'active' : ''}>Dashboard</Link></li>
                                             <li><Link to='/doctor/appointments' className={isActiveLink('/doctor/appointments') ? 'active' : ''}>Appointments</Link></li>
                                             <li><Link to='/doctor/chat' className={isActiveLink('/doctor/chat') ? 'active' : ''}>Chat</Link></li>
+                                            <li><Link to={`/profile/${loggedInUser.id}`} className={isActiveLink(`/profile/${loggedInUser.id}`) ? 'active' : ''}>Profile</Link></li>
                                             <li><Link to="/doctor/edit-profile" className={isActiveLink('/doctor/edit-profile') ? 'active' : ''}>Profile Settings</Link></li>
                                         </ul>
                                     )}
@@ -141,20 +179,24 @@ function NavBar() {
                     )}
 
 
-                    {loggedInUser && loggedInUser.role === "client" && (
+
+
+
+                    {loggedInUser && loggedInUser.role === "pharmacist" && (
                         <li>
                             <Link to={location.pathname} className={isParentPath('/profile-settings/') ? 'active' : ''}>Pages <FaAngleDown className='down-arrow' /></Link>
-                            <ul className="submenu doctors-sub-menu">
+                            <ul className="submenu pharmacist-sub-menu">
                                 {/* Add sub-menu items here */}
                                 <li>
                                     <Link to={location.pathname} className={isParentPath('/profile-settings/') ? 'active' : ''} id={!token && 'disabled'} title={!token && `Login Required`} Required>Dashboard <FaChevronRight /></Link>
-                                    {token && loggedInUser && loggedInUser.role === 'client' && (
+                                    {token && loggedInUser && loggedInUser.role === 'pharmacist' && (
                                         <ul className="submenu dashboard-sub-menu">
                                             {/* Add sub-menu items here */}
-                                            <li><Link to="/client/dashboard" className={isActiveLink('/client/') ? 'active' : ''}>Dashboard</Link></li>
-                                            <li><Link to='/client/appointments' className={isActiveLink('/client/appointments') ? 'active' : ''}>Appointments</Link></li>
-                                            <li><Link to='/client/chat' className={isActiveLink('/client/chat') ? 'active' : ''}>Chat</Link></li>
-                                            <li><Link to="/client/edit-profile" className={isActiveLink('/client/edit-profile') ? 'active' : ''}>Profile Settings</Link></li>
+                                            <li><Link to="/pharmacist/dashboard" className={isActiveLink('/pharmacist/') ? 'active' : ''}>Dashboard</Link></li>
+                                            <li><Link to='/pharmacist/orders' className={isActiveLink('/pharmacist/orders') ? 'active' : ''}>Orders</Link></li>
+                                            <li><Link to='/pharmacist/chat' className={isActiveLink('/pharmacist/chat') ? 'active' : ''}>Chat</Link></li>
+                                            <li><Link to={`/profile/${loggedInUser.id}`} className={isActiveLink(`/profile/${loggedInUser.id}`) ? 'active' : ''}>Profile</Link></li>
+                                            <li><Link to="/pharmacist/edit-profile" className={isActiveLink('/pharmacist/edit-profile') ? 'active' : ''}>Profile Settings</Link></li>
                                         </ul>
                                     )}
                                 </li>
@@ -162,6 +204,8 @@ function NavBar() {
                             </ul>
                         </li>
                     )}
+
+
                     <li>
                         <Link to={location.pathname} className={isParentPath('/client-doctor/') ? 'active' : ''}>Users <FaAngleDown className='down-arrow' /></Link>
                         <ul className="submenu users-sub-menu">
@@ -181,6 +225,7 @@ function NavBar() {
                     </li>
 
                     <li><Link to="/posts">Posts</Link></li>
+                    <li><Link to="/nearby-clinics">View Map</Link></li>
                     <li><Link to="/">Inbox</Link></li>
                     <li>
                         <Link to="/dashboard">Services <FaAngleDown className='down-arrow' /></Link>

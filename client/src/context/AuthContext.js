@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }) => {
         })
         const data = await response.json()
 
+        console.log('the login response is: ', response)
         if (response.status === 200) {
             console.log("Logged In");
             setAuthTokens(data)
@@ -273,6 +274,92 @@ export const AuthProvider = ({ children }) => {
     };
 
 
+    const registerPharmacist = async (email, username, phone, address, pharmacy_license, password, password2) => {
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('username', username);
+        formData.append('phone', phone);
+        formData.append('address', address);
+        formData.append('pharmacy_license', pharmacy_license);
+        formData.append('password', password);
+        formData.append('password2', password2);
+
+        try {
+            const response = await fetch(`${ip}/api/register/pharmacist`, {
+                method: "POST",
+                body: formData,  // No need to set Content-Type
+            });
+
+            if (response.status === 201) {
+                history.push("/login");
+                swal.fire({
+                    title: "Registration Successful, Login Now",
+                    icon: "success",
+                    toast: true,
+                    timer: 6000,
+                    position: "top-right",
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                });
+            } else {
+                const errorData = await response.json(); // Parse error response
+                console.log(response.status);
+                console.log("Server error:", errorData);
+                if (errorData.email) {
+                    swal.fire({
+                        title: "User with this email already exixts.",
+                        icon: "error",
+                        toast: true,
+                        timer: 6000,
+                        position: "top-right",
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    });
+                }
+                else if (errorData.password) {
+                    swal.fire({
+                        title: "Please choose stronger password.",
+                        icon: "warning",
+                        toast: true,
+                        timer: 6000,
+                        position: "top-right",
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    });
+                }
+                else {
+                    swal.fire({
+                        title: "Registration Failed",
+                        text: errorData.detail,
+                        icon: "error",
+                        toast: true,
+                        timer: 6000,
+                        position: "top-right",
+                        timerProgressBar: true,
+                        showConfirmButton: false,
+                        showCloseButton: true,
+                    });
+                }
+            }
+        } catch (error) {
+            console.error("Error during registration:", error);
+            swal.fire({
+                title: "An unexpected error occurred",
+                icon: "error",
+                toast: true,
+                timer: 6000,
+                position: "top-right",
+                timerProgressBar: true,
+                showConfirmButton: false,
+                showCloseButton: true,
+            });
+        }
+    };
+
+
 
     const logoutUser = () => {
         setAuthTokens(null)
@@ -299,6 +386,7 @@ export const AuthProvider = ({ children }) => {
         setAuthTokens,
         registerUser,
         registerDoctor,
+        registerPharmacist,
         loginUser,
         logoutUser,
     }

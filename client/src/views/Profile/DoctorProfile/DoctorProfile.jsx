@@ -18,23 +18,18 @@ import { RiFullscreenFill } from "react-icons/ri";
 import Loading from "../../Loading/Loading";
 import useAxios from "../../../utils/useAxios";
 import TimeSlot from "./BookAppointment/TimeSlot/TimeSlot";
-import AddPostForm from "../../Posts/AddPostForm/AddPostForm";
+import AddPostForm from "../UserPosts/AddPostForm/AddPostForm";
 import Reviews from "./Reviews/Reviews";
 import BookAppointment from "./BookAppointment/BookAppointment";
+import ClinicLocation from "./ClinicLocation/ClinicLocation";
+import UserPosts from "../UserPosts/Posts";
 
 const swal = require('sweetalert2')
-const truncateWords = (text, numWords) => {
-    const words = text.split(' ');
-    return words.slice(0, numWords).join(' ') + (words.length > numWords ? ' ...' : '');
-};
-
-
 const DoctorProfile = ({ id }) => {
     const axios = useAxios()
-    const currentUser = JSON.parse(localStorage.getItem('loggedInUser'))
+    const currentUser = JSON.parse(localStorage.getItem(''))
 
     let { user } = useContext(AuthContext)
-    const loggedInUser = JSON.parse(sessionStorage.getItem('loggedInUser'))
     const [isCurrentUser, setIsCurrentUser] = useState()
 
     const [loading, setLoading] = useState(false)
@@ -54,7 +49,7 @@ const DoctorProfile = ({ id }) => {
                 console.log("This is profiles data: ", data);
                 console.log("This is current user data: ", user);
                 console.log('is same: ', user);
-                setIsCurrentUser(currentUser.email === data.email);
+                setIsCurrentUser(user.email === data.email);
                 setFormUserName(data.username);
                 setFormPhone(data.phone);
                 setFormAddress(data.address);
@@ -68,11 +63,6 @@ const DoctorProfile = ({ id }) => {
     }, [id]);
 
 
-    const [appointments, setAppointments] = useState()
-    // ========== Book Appointment ===========
-    
-
-    // const [appointmentDate, setAppointmentDate] = useState('');
 
 
 
@@ -127,30 +117,6 @@ const DoctorProfile = ({ id }) => {
         const newHeight = e.target.scrollHeight + 'px';
         e.target.style.height = newHeight;
     };
-
-
-
-    // profile picture change
-    const updatePicture = () => {
-        axios.patch(`${ip}/api/update-profile/${id}/`, { image: bioText.trim() }, {
-            headers: {
-                'Content-Type': 'application/json',
-                // Add any additional headers if needed
-            },
-        })
-            .then(response => {
-                console.log('Bio updated successfully:', response.data)
-                setSaveButtonLoading(false)
-                fetchDoctorData()
-            })
-            .catch(error => {
-                console.error('Error updating bio:', error)
-                fetchDoctorData()
-            });
-
-    };
-
-
 
 
 
@@ -458,8 +424,6 @@ const DoctorProfile = ({ id }) => {
 
     const [activeContent, setActiveContent] = useState('overview')
 
-    const clinicLocation = { lat: 123.456, lng: -78.901 }
-
     return (
         <>
             {loading ?
@@ -511,8 +475,9 @@ const DoctorProfile = ({ id }) => {
                                 <div className="tab-bar">
                                     <ul>
                                         <li onClick={() => setActiveContent('overview')} className={`overview ${activeContent === 'overview' ? 'active' : ''}`}>Overview</li>
-                                        <li onClick={() => setActiveContent('clinic-location')} className={`clinic-location ${activeContent === 'clinic-location' ? 'active' : ''}`}>Clinic Location</li>
-                                        <li onClick={() => setActiveContent('book-appointment')} className={`book-appointment ${activeContent === 'book-appointment' ? 'active' : ''}`}>Book Appointment</li>
+                                        <li onClick={() => setActiveContent('posts')} className={`posts ${activeContent === 'posts' ? 'active' : ''}`}>Posts</li>
+                                        <li onClick={() => setActiveContent('clinic-location')} className={`clinic-location ${activeContent === 'clinic-location' ? 'active' : ''}`}>Clinic&nbsp;Location</li>
+                                        <li onClick={() => setActiveContent('book-appointment')} className={`book-appointment ${activeContent === 'book-appointment' ? 'active' : ''}`}>Book&nbsp;Appointment</li>
                                         <li onClick={() => setActiveContent('reviews')} className={`reviews ${activeContent === 'reviews' ? 'active' : ''}`}>Reviews</li>
                                     </ul>
                                 </div>
@@ -530,10 +495,14 @@ const DoctorProfile = ({ id }) => {
                                         <pre>{doctorData.medical_background}</pre>
                                     </div>
 
+                                    {/* ========== CLINIC LOCATION ========== */}
+                                    <div className={`content posts ${activeContent === 'posts' ? 'active' : ''}`}>
+                                        <UserPosts posts={posts} user_id={id} fetchUserPosts={fetchUserPosts}/>
+                                    </div>
 
                                     {/* ========== CLINIC LOCATION ========== */}
                                     <div className={`content clinic-location ${activeContent === 'clinic-location' ? 'active' : ''}`}>
-                                        This is clinic location.
+                                        <ClinicLocation doctor={doctorData} />
                                     </div>
 
                                     {/* ========== BOOK APPOINTMENT ========== */}
@@ -542,8 +511,8 @@ const DoctorProfile = ({ id }) => {
                                             <div className="client-information information">
                                                 <h4>Client Information</h4>
                                                 <div className="info">
-                                                    <div className="image" style={loggedInUser ? {
-                                                        backgroundImage: `url(${loggedInUser.image})`,
+                                                    <div className="image" style={ ? {
+                                                        backgroundImage: `url(${.image})`,
                                                         backgroundPosition: 'center',
                                                         backgroundSize: 'cover',
                                                         backgroundRepeat: 'no-repeat',
@@ -551,7 +520,7 @@ const DoctorProfile = ({ id }) => {
 
                                                     </div>
                                                     <div className="details">
-                                                        <p>{loggedInUser.username}</p>
+                                                        <p>{.username}</p>
                                                         <span>{new Date().toLocaleDateString()}</span>
                                                     </div>
                                                 </div>
@@ -703,19 +672,9 @@ const DoctorProfile = ({ id }) => {
                         //                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?
                         //                     </p> */}
                         //                                     {/* <p className={`details ${showFullText ? "show-all" : "limited"}`}>
-                        //                         {truncateWords(longtext, 100)}
-                        //                     </p>
-                        //                     {longtext.split(' ').length > 100 && (
-                        //                         <button className="see-more" onClick={() => setShowFullText(!showFullText)}>
-                        //                             {showFullText ? "See Less" : "See More"}
                         //                         </button>
                         //                     )} */}
                         //                                     <p className={`details ${showFullText ? "show-all" : "limited"}`}>
-                        //                                         {showFullText ? post.content : truncateWords(post.content, 30)}
-                        //                                         {post.content.split(' ').length > 30 && (
-                        //                                             <button
-                        //                                                 className="see-more"
-                        //                                                 style={{ display: 'inline', marginLeft: '5px' }}
                         //                                                 onClick={() => setShowFullText(!showFullText)}
                         //                                             >
                         //                                                 {showFullText ? "See Less" : "See More"}

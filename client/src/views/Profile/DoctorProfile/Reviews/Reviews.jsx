@@ -54,6 +54,7 @@ function Reviews({ doctor_id }) {
           console.log('response is : ', data)
           setRating(0)
           setReviewText('')
+          fetchReviews()
           swal.fire({
             title: "Review Added.",
             icon: "success",

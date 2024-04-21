@@ -103,9 +103,12 @@ class Doctor(BaseUser):
 
 
 class Pharmacist(BaseUser):
-    opening_hours = models.CharField(max_length=100)
-    delivery_service = models.BooleanField(default=False)
-    pharmacy_license = models.ImageField(upload_to=pharmacy_license_path)
+    pharmacy_location = models.CharField(max_length=200, null=True, blank=True)
+    pharmacy_license = models.ImageField(upload_to=license_image_path, null=True, blank=True)
+    opening_time = models.TimeField(blank=True, null=True)#
+    closing_time = models.TimeField(blank=True, null=True)#
+    delivery_service = models.BooleanField(default=False, null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = "Pharmacist"

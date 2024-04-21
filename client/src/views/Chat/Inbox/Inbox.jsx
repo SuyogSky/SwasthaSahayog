@@ -66,16 +66,18 @@ function Inbox() {
     }, [chatHistory, history])
 
     const markMessagesAsRead = async (senderId, receiverId) => {
-        console.log(senderId, user_id)
-        if (senderId == user_id) {
+        // if (message.sender.id != user_id) {
+            const sender = user_id
+            const receiver = id
+            console.log('message is seen')
             try {
-                await axios.post(`${baseUrl}/mark_messages_as_read/${senderId}/${receiverId}/`);
+                await axios.post(`${baseUrl}/mark_messages_as_read/${receiverId}/${senderId}/`);
                 console.log('Messages marked as read successfully.');
                 getChats()
             } catch (error) {
                 console.error('Error marking messages as read:', error);
             }
-        }
+        // }
     };
 
     const [isFocused, setIsFocused] = useState(false)
@@ -133,6 +135,7 @@ function Inbox() {
 
             // Append the modified data to the chat history
             setChatHistory((prevChatHistory) => [...prevChatHistory, data]);
+            getChatHistory()
         };
 
         socket.onclose = () => {
@@ -253,9 +256,9 @@ function Inbox() {
 
                 reader.readAsDataURL(image);
             } else {
-                ws.send(JSON.stringify(data));  // Send the data without image if image is not present
+                ws.send(JSON.stringify(data));
             }
-
+            markMessagesAsRead(id, user_id)
             setText('');
             setImage(null)
             setDisplayImage(null)
@@ -362,6 +365,16 @@ function Inbox() {
 
     const [receiverUser, setReceiverUser] = useState()
 
+    const [isSeenIndicated, setIsSeenIndicated] = useState(false)
+    let lastSeenMessageIndex = -1;
+
+    // Find the index of the last message with is_read status true
+    chatHistory.forEach((message, index) => {
+        if (message.is_read) {
+            console.log('the lase message is:',message)
+            lastSeenMessageIndex = index;
+        }
+    });
     return (
         <div className="chat-main-container">
             <div className="users-list-container">
@@ -466,7 +479,7 @@ function Inbox() {
                         <span onClick={() => history.push('/profile/' + visitedUserData.id)}>View Profile</span>
                     </div>
 
-                    {chatHistory && chatHistory.map(message => {
+                    {/* {chatHistory && chatHistory.map(message => {
                         return (
                             <>
                                 {message.sender.id === user_id &&
@@ -519,8 +532,92 @@ function Inbox() {
                                         </div>
                                     </div>
                                 }
+                                {message.is_read && <span>Seen</span>}
                             </>
                         )
+                    })} */}
+
+                    {chatHistory && chatHistory.map((message, index) => {
+                        const isLastMessage = index === lastSeenMessageIndex;
+
+                        if (message.sender.id === user_id) {
+                            return (
+                                <>
+                                    <div className="message sent">
+                                        <div className="profile">
+                                            <div className="image" style={message ? {
+                                                backgroundImage: `url(${(message.sender.image).includes(ip) ? message.sender.image : ip + message.sender.image})`,
+                                                backgroundPosition: 'center',
+                                                backgroundSize: 'cover',
+                                                backgroundRepeat: 'no-repeat',
+                                            } : null}>
+
+                                            </div>
+                                            <span>2:22 pm</span>
+                                        </div>
+                                        <div className="message-container">
+                                            {message.message && (
+                                                <div className="message-content">
+                                                    <MdOutlineArrowRight />
+                                                    <p>You</p>
+                                                    <span>{message.message}</span>
+                                                </div>
+                                            )}
+                                            {message.image && <img src={message.image} alt="image" />}
+                                        </div>
+                                        {(isLastMessage && message.is_read && !isSeenIndicated) &&
+                                            <span className='seen-indicator' style={message ? {
+                                                backgroundImage: `url(${(message.receiver.image).includes(ip) ? message.receiver.image : ip + message.receiver.image})`,
+                                                backgroundPosition: 'center',
+                                                backgroundSize: 'cover',
+                                                backgroundRepeat: 'no-repeat',
+                                            } : null}>
+
+                                            </span>
+                                        }
+                                    </div>
+                                </>
+                            )
+                        }
+                        else {
+                            return (
+                                <>
+                                    <div className="message recieved">
+                                        <div className="profile">
+                                            <div className="image" style={message ? {
+                                                backgroundImage: `url(${(message.sender.image).includes(ip) ? message.sender.image : ip + message.sender.image})`,
+                                                backgroundPosition: 'center',
+                                                backgroundSize: 'cover',
+                                                backgroundRepeat: 'no-repeat',
+                                            } : null}>
+
+                                            </div>
+                                            <span>2:22 pm</span>
+                                        </div>
+                                        <div className="message-container">
+                                            {message.message && (
+                                                <div className="message-content">
+                                                    <MdOutlineArrowRight />
+                                                    <p>{message.sender.username}</p>
+                                                    <span>{message.message}</span>
+                                                </div>
+                                            )}
+                                            {message.image && <img src={message.image} alt="image" />}
+                                        </div>
+                                        {(isLastMessage && message.is_read && !isSeenIndicated) &&
+                                            <span className='seen-indicator' style={message ? {
+                                                backgroundImage: `url(${(message.sender.image).includes(ip) ? message.sender.image : ip + message.sender.image})`,
+                                                backgroundPosition: 'center',
+                                                backgroundSize: 'cover',
+                                                backgroundRepeat: 'no-repeat',
+                                            } : null}>
+
+                                            </span>
+                                        }
+                                    </div>
+                                </>
+                            )
+                        }
                     })}
                 </div>
 

@@ -5,6 +5,7 @@ import DoctorProfile from './DoctorProfile/DoctorProfile'
 import { useParams } from 'react-router-dom'
 import ip from '../../ip'
 import useAxios from '../../utils/useAxios'
+import PharmacistProfile from './PharmacistProfile/PharmacistProfile'
 
 
 function Profile() {
@@ -40,8 +41,9 @@ function Profile() {
     <>
       {visitedUserData && (
         <>
-          {visitedUserData.role === 'client' ? <ClientProfile id={id} /> :
-            visitedUserData.role === 'doctor' ? <DoctorProfile id={id} /> : null}
+          {visitedUserData.role === 'client' ? <ClientProfile id={id} /> : 
+          visitedUserData.role === 'doctor' ? <DoctorProfile id={id} /> : 
+          visitedUserData.role === 'pharmacist' ? <PharmacistProfile id={id} /> : null}
         </>
       )}
     </>

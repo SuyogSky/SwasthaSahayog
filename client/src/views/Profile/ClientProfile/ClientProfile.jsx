@@ -17,6 +17,9 @@ import { IoEyeOutline } from "react-icons/io5";
 import { RiFullscreenFill } from "react-icons/ri";
 import Loading from "../../Loading/Loading";
 import useAxios from "../../../utils/useAxios";
+import UserPosts from "../UserPosts/Posts";
+import AddPostForm from "../UserPosts/AddPostForm/AddPostForm";
+import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 const swal = require('sweetalert2')
 const truncateWords = (text, numWords) => {
@@ -26,6 +29,7 @@ const truncateWords = (text, numWords) => {
 
 const ClientProfile = ({ id }) => {
     const axios = useAxios()
+    const history = useHistory()
 
     let { user } = useContext(AuthContext)
     const currentUser = JSON.parse(localStorage.getItem('loggedInUser'))
@@ -437,285 +441,403 @@ const ClientProfile = ({ id }) => {
     const [isUpdatable, setIsUpdatable] = useState(false)
 
     const [viewFullImage, setViewFullImage] = useState(false)
+
+
+
+    const [activeContent, setActiveContent] = useState('posts')
+
+    function formatDate(dateString) {
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        const formattedDate = new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
+        return formattedDate;
+    }
+
     return (
         <>
             {loading ?
                 <Loading />
                 :
-                <section className="profile-section" style={viewFullImage || viewPostForm ? {
+                // <section className="profile-section" style={viewFullImage || viewPostForm ? {
+                //     overflow: 'hidden',
+                //     height: 'calc(100vh - 120px)'
+                // } : null}>
+                //     {clientData && (
+                //         <>
+                //             <div className="left">
+                //                 <div className="client-info">
+                //                     <form className="profile-image-div" onSubmit={updateProfilePicture}>
+                //                         <div className="image" style={clientData ? {
+                //                             backgroundImage: `url(${profilePicture})`,
+                //                             backgroundPosition: 'center',
+                //                             backgroundSize: 'cover',
+                //                             backgroundRepeat: 'no-repeat',
+                //                         } : null}>
+                //                             <label className="upload-photo-div">
+                //                                 <AiOutlineCloudUpload />
+                //                                 <p>Upload Photo</p>
+                //                                 <input type="file" onChange={(e) => handleImageUpload(e)} />
+                //                             </label>
+
+                //                             <div className="actions">
+                //                                 <IoEyeOutline className="eye-ball" title="Profile View" />
+                //                                 <RiFullscreenFill className="full-screen" title="Full Screen" onClick={() => setViewFullImage(!viewFullImage)} />
+                //                             </div>
+                //                         </div>
+                //                         {profileImage && (
+                //                             <div className="actions">
+                //                                 <button className="save-btn" type="submit">Save</button>
+                //                                 <button className="cancle-btn" type="button" onClick={() => cancleClicked()}>Cancle</button>
+                //                             </div>
+                //                         )}
+                //                     </form>
+                //                     <div className="details">
+                //                         <h4>{clientData.username}</h4>
+                //                         this is client
+                //                         this is {clientData.role}
+                //                         <p><span>Email: </span>{clientData.email}</p>
+                //                         <p><span>Phone: </span>{clientData.phone}</p>
+                //                         <p><span>Date of Birth: </span>{clientData.date_of_birth || <span className="notset">Not Set</span>}</p>
+                //                         {isCurrentUser ? <button onClick={() => setViewPostForm(!viewPostForm)}>Upload Post</button> : <button>Chat</button>}
+                //                     </div>
+                //                 </div>
+
+                //                 <div className="bio">
+                //                     <h4 className="top">Bio <BiEdit className="edit" onClick={handleEditClick} /></h4>
+                //                     <div className="bio-container">
+                //                         <textarea
+                //                             ref={textareaRef}
+                //                             value={bioText.replace(/\n/g, '\r\n')} // Handle line breaks directly in the value
+                //                             onChange={handleTextareaChange}
+                //                             readOnly={!isEditing}
+                //                             rows={1}  // Set a small number of rows initially
+                //                             style={{ resize: 'none', overflowY: 'hidden' }} // Disable textarea resizing and hide overflow
+                //                             className={isEditing && 'editing'}
+                //                         />
+                //                         {isEditing && (
+                //                             <>
+                //                                 <div>Characters remaining: {maxCharacters - bioText.length}</div>
+                //                                 <div className="actions">
+                //                                     <button disabled={disableSave} onClick={!disable && handleSaveClick}>Save</button>
+                //                                     <button onClick={handleCancelClick}>Cancel</button>
+                //                                 </div>
+                //                             </>
+                //                         )}
+                //                         {saveBtnLoading && (
+                //                             <div className="loading">
+                //                                 <div class="ld-ripple">
+                //                                     <div></div>
+                //                                     <div></div>
+                //                                 </div>
+                //                             </div>
+                //                         )}
+                //                     </div>
+
+                //                 </div>
+
+                //                 <div className="posts">
+                //                     {posts.length > 0
+                //                         ?
+                //                         <>
+                //                             <div className="filter-div">
+                //                                 <h3>Posts</h3>
+                //                                 <button className="filter"><FiFilter /><p>Filter</p></button>
+                //                             </div>
+
+                //                             <div className="contents">
+                //                                 {posts && posts.map((post) => (
+                //                                     <div className="content">
+                //                                         <div className="top">
+                //                                             <div className="client-details">
+                //                                                 <div className="image" style={post ? {
+                //                                                     backgroundImage: `url(${ip}/${post.user.image})`,
+                //                                                     backgroundPosition: 'center',
+                //                                                     backgroundSize: 'cover',
+                //                                                     backgroundRepeat: 'no-repeat',
+                //                                                 } : null}>
+
+                //                                                 </div>
+                //                                                 <p>
+                //                                                     <span className="name">{post.user.username}</span>
+                //                                                     <span className="date">{new Date(post.date).toLocaleDateString()}</span>
+                //                                                 </p>
+                //                                             </div>
+
+                //                                             <div className="actions">
+                //                                                 <FaEdit title="Edit Post" />
+                //                                                 <MdDelete title="Delete Post" onClick={() => handleDeletePost(post.id)} />
+                //                                             </div>
+                //                                         </div>
+                //                                         <div className="post-container">
+                //                                             {/* <p className="details">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?</p> */}
+                //                                             {/* <p className={`details ${showFullText ? "show-all" : "limited"}`}>
+                //                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?
+                //                             Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?
+                //                             </p> */}
+                //                                             {/* <p className={`details ${showFullText ? "show-all" : "limited"}`}>
+                //                                 {truncateWords(longtext, 100)}
+                //                             </p>
+                //                             {longtext.split(' ').length > 100 && (
+                //                                 <button className="see-more" onClick={() => setShowFullText(!showFullText)}>
+                //                                     {showFullText ? "See Less" : "See More"}
+                //                                 </button>
+                //                             )} */}
+                //                                             <p className={`details ${showFullText ? "show-all" : "limited"}`}>
+                //                                                 {showFullText ? post.content : truncateWords(post.content, 30)}
+                //                                                 {post.content.split(' ').length > 30 && (
+                //                                                     <button
+                //                                                         className="see-more"
+                //                                                         style={{ display: 'inline', marginLeft: '5px' }}
+                //                                                         onClick={() => setShowFullText(!showFullText)}
+                //                                                     >
+                //                                                         {showFullText ? "See Less" : "See More"}
+                //                                                     </button>
+                //                                                 )}
+                //                                             </p>
+                //                                             {post.image && (
+                //                                                 <div className="post-image" style={post ? {
+                //                                                     backgroundImage: `url(${ip}/${post.image})`,
+                //                                                     backgroundPosition: 'center',
+                //                                                     backgroundSize: 'cover',
+                //                                                     backgroundRepeat: 'no-repeat',
+                //                                                 } : null}>
+
+                //                                                 </div>
+                //                                             )}
+                //                                             <div className="comment">
+                //                                                 <span><FaRegComment /><p>Comments</p></span>
+                //                                             </div>
+                //                                         </div>
+                //                                     </div>
+                //                                 ))}
+                //                             </div>
+                //                         </>
+                //                         :
+                //                         <h6>No Posts Available</h6>
+                //                     }
+                //                 </div>
+
+
+                //             </div>
+
+                //             <div className="right">
+                //                 <form action="" onSubmit={UpdateProfileDetails}>
+                //                     <h4>Edit Profile</h4>
+
+                //                     <div className="username">
+                //                         <label htmlFor="username">User Name:</label>
+                //                         <input type="text" id="username" value={formUserName} onChange={(e) => {
+                //                             setIsUpdatable(true)
+                //                             setFormUserName(e.target.value)
+                //                         }} />
+                //                     </div>
+
+                //                     <div className="phone">
+                //                         <label htmlFor="phone">Phone:</label>
+                //                         <input type="number" id="phone" value={formPhone} onChange={(e) => {
+                //                             setIsUpdatable(true)
+                //                             setFormPhone(e.target.value)
+                //                         }} />
+                //                     </div>
+
+                //                     <div className="address">
+                //                         <label htmlFor="address">Address:</label>
+                //                         <input type="text" id="address" value={formAddress} onChange={(e) => {
+                //                             setIsUpdatable(true)
+                //                             setFormAddress(e.target.value)
+                //                         }} />
+                //                     </div>
+
+                //                     <button disabled={!isUpdatable} type="submit" className={!isUpdatable ? 'disabled' : ''}>Update</button>
+                //                 </form>
+
+                //                 <div className="appointment-history">
+                //                     <h4>Appointment History</h4>
+
+                //                     <div className="history-container">
+                //                         <div className="history">
+                //                             <div className="appointment-details">
+                //                                 <p>Dr. Doctor 1</p>
+                //                                 <span>28/11/2023 - 12:30 PM</span>
+                //                             </div>
+                //                             <button className="action"><BsExclamationCircleFill /></button>
+                //                         </div>
+
+                //                         <div className="history">
+                //                             <div className="appointment-details">
+                //                                 <p>Dr. Doctor 1</p>
+                //                                 <span>28/11/2023 - 12:30 PM</span>
+                //                             </div>
+                //                             <button className="action"><BsExclamationCircleFill /></button>
+                //                         </div>
+
+                //                         <div className="history">
+                //                             <div className="appointment-details">
+                //                                 <p>Dr. Doctor 1</p>
+                //                                 <span>28/11/2023 - 12:30 PM</span>
+                //                             </div>
+                //                             <button className="action"><BsExclamationCircleFill /></button>
+                //                         </div>
+                //                     </div>
+                //                 </div>
+                //             </div>
+
+                //             {viewPostForm && (
+                //                 <div className="upload-post-form">
+                //                     <form action="" onSubmit={handleAddPost}>
+                //                         <div className="top">
+                //                             <h6>Create Post</h6>
+                //                             <RxCross2 onClick={() => setViewPostForm(!viewPostForm)} />
+                //                         </div>
+                //                         <div className="user-detail">
+                //                             <div className="image" style={clientData ? {
+                //                                 backgroundImage: `url(${clientData.image})`,
+                //                                 backgroundPosition: 'center',
+                //                                 backgroundSize: 'cover',
+                //                                 backgroundRepeat: 'no-repeat',
+                //                             } : null}>
+
+                //                             </div>
+                //                             <p>
+                //                                 <span className="name">{user.username}</span>
+                //                                 <span className="date">{new Date().toLocaleDateString()}</span>
+                //                             </p>
+                //                         </div>
+
+                //                         <div className="post-content-fields">
+                //                             <textarea
+                //                                 value={value}
+                //                                 onChange={handlePostTextareaChange}
+                //                                 placeholder="Write Your Problem..."
+                //                             />
+
+                //                             <div className="image-upload">
+                //                                 <label htmlFor="post-image" className="image-field">
+                //                                     <input type="file" id="post-image" onChange={handleFileChange} />
+                //                                     {
+                //                                         imagePreview ?
+                //                                             <img src={imagePreview} alt="" srcset="" />
+                //                                             :
+                //                                             <>
+                //                                                 <AiOutlineCloudUpload />
+                //                                                 <p>Upload Image</p>
+                //                                             </>
+                //                                     }
+                //                                 </label>
+                //                             </div>
+                //                         </div>
+
+                //                         <div className="btn-container">
+                //                             <button type="submit" className="upload-btn">Post</button>
+                //                         </div>
+                //                     </form>
+                //                 </div>
+                //             )}
+                //             {viewFullImage
+                //                 ?
+                //                 <div className="full-image-div">
+                //                     <RxCross2 onClick={() => setViewFullImage(!viewFullImage)} />
+                //                     <div className="image-container" style={clientData ? {
+                //                         backgroundImage: `url(${profilePicture})`,
+                //                         backgroundPosition: 'center',
+                //                         backgroundSize: 'contain',
+                //                         backgroundRepeat: 'no-repeat',
+                //                     } : null}>
+
+                //                     </div>
+                //                 </div>
+                //                 :
+                //                 null
+                //             }
+                //         </>
+                //     )}
+                // </section>
+
+                <section className="client-profile-section" style={viewFullImage || viewPostForm ? {
                     overflow: 'hidden',
                     height: 'calc(100vh - 120px)'
                 } : null}>
                     {clientData && (
                         <>
-                            <div className="left">
-                                <div className="client-info">
-                                    <form className="profile-image-div" onSubmit={updateProfilePicture}>
-                                        <div className="image" style={clientData ? {
-                                            backgroundImage: `url(${profilePicture})`,
-                                            backgroundPosition: 'center',
-                                            backgroundSize: 'cover',
-                                            backgroundRepeat: 'no-repeat',
-                                        } : null}>
-                                            <label className="upload-photo-div">
-                                                <AiOutlineCloudUpload />
-                                                <p>Upload Photo</p>
-                                                <input type="file" onChange={(e) => handleImageUpload(e)} />
-                                            </label>
-
-                                            <div className="actions">
-                                                <IoEyeOutline className="eye-ball" title="Profile View" />
-                                                <RiFullscreenFill className="full-screen" title="Full Screen" onClick={() => setViewFullImage(!viewFullImage)} />
-                                            </div>
-                                        </div>
-                                        {profileImage && (
-                                            <div className="actions">
-                                                <button className="save-btn" type="submit">Save</button>
-                                                <button className="cancle-btn" type="button" onClick={() => cancleClicked()}>Cancle</button>
-                                            </div>
-                                        )}
-                                    </form>
-                                    <div className="details">
-                                        <h4>{clientData.username}</h4>
-                                        this is client
-                                        this is {clientData.role}
-                                        <p><span>Email: </span>{clientData.email}</p>
-                                        <p><span>Phone: </span>{clientData.phone}</p>
-                                        <p><span>Date of Birth: </span>{clientData.date_of_birth || <span className="notset">Not Set</span>}</p>
-                                        {isCurrentUser ? <button onClick={() => setViewPostForm(!viewPostForm)}>Upload Post</button> : <button>Chat</button>}
-                                    </div>
-                                </div>
-
-                                <div className="bio">
-                                    <h4 className="top">Bio <BiEdit className="edit" onClick={handleEditClick} /></h4>
-                                    <div className="bio-container">
-                                        <textarea
-                                            ref={textareaRef}
-                                            value={bioText.replace(/\n/g, '\r\n')} // Handle line breaks directly in the value
-                                            onChange={handleTextareaChange}
-                                            readOnly={!isEditing}
-                                            rows={1}  // Set a small number of rows initially
-                                            style={{ resize: 'none', overflowY: 'hidden' }} // Disable textarea resizing and hide overflow
-                                            className={isEditing && 'editing'}
-                                        />
-                                        {isEditing && (
+                            <div className="doctor-info">
+                                <form className="profile-image-div" onSubmit={updateProfilePicture}>
+                                    <div className="image" style={clientData ? {
+                                        backgroundImage: `url(${profilePicture})`,
+                                        backgroundPosition: 'center',
+                                        backgroundSize: 'cover',
+                                        backgroundRepeat: 'no-repeat',
+                                    } : null}>
+                                        {isCurrentUser && (
                                             <>
-                                                <div>Characters remaining: {maxCharacters - bioText.length}</div>
+                                                <label className="upload-photo-div">
+                                                    <AiOutlineCloudUpload />
+                                                    <p>Upload Photo</p>
+                                                    <input type="file" onChange={(e) => handleImageUpload(e)} />
+                                                </label>
+
                                                 <div className="actions">
-                                                    <button disabled={disableSave} onClick={!disable && handleSaveClick}>Save</button>
-                                                    <button onClick={handleCancelClick}>Cancel</button>
+                                                    <IoEyeOutline className="eye-ball" title="Profile View" />
+                                                    <RiFullscreenFill className="full-screen" title="Full Screen" onClick={() => setViewFullImage(!viewFullImage)} />
                                                 </div>
                                             </>
                                         )}
-                                        {saveBtnLoading && (
-                                            <div className="loading">
-                                                <div class="ld-ripple">
-                                                    <div></div>
-                                                    <div></div>
-                                                </div>
-                                            </div>
-                                        )}
                                     </div>
-
-                                </div>
-
-                                <div className="posts">
-                                    {posts.length > 0
-                                        ?
-                                        <>
-                                            <div className="filter-div">
-                                                <h3>Posts</h3>
-                                                <button className="filter"><FiFilter /><p>Filter</p></button>
-                                            </div>
-
-                                            <div className="contents">
-                                                {posts && posts.map((post) => (
-                                                    <div className="content">
-                                                        <div className="top">
-                                                            <div className="client-details">
-                                                                <div className="image" style={post ? {
-                                                                    backgroundImage: `url(${ip}/${post.user.image})`,
-                                                                    backgroundPosition: 'center',
-                                                                    backgroundSize: 'cover',
-                                                                    backgroundRepeat: 'no-repeat',
-                                                                } : null}>
-
-                                                                </div>
-                                                                <p>
-                                                                    <span className="name">{post.user.username}</span>
-                                                                    <span className="date">{new Date(post.date).toLocaleDateString()}</span>
-                                                                </p>
-                                                            </div>
-
-                                                            <div className="actions">
-                                                                <FaEdit title="Edit Post" />
-                                                                <MdDelete title="Delete Post" onClick={() => handleDeletePost(post.id)} />
-                                                            </div>
-                                                        </div>
-                                                        <div className="post-container">
-                                                            {/* <p className="details">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?</p> */}
-                                                            {/* <p className={`details ${showFullText ? "show-all" : "limited"}`}>
-                                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?
-                                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?
-                                            </p> */}
-                                                            {/* <p className={`details ${showFullText ? "show-all" : "limited"}`}>
-                                                {truncateWords(longtext, 100)}
-                                            </p>
-                                            {longtext.split(' ').length > 100 && (
-                                                <button className="see-more" onClick={() => setShowFullText(!showFullText)}>
-                                                    {showFullText ? "See Less" : "See More"}
-                                                </button>
-                                            )} */}
-                                                            <p className={`details ${showFullText ? "show-all" : "limited"}`}>
-                                                                {showFullText ? post.content : truncateWords(post.content, 30)}
-                                                                {post.content.split(' ').length > 30 && (
-                                                                    <button
-                                                                        className="see-more"
-                                                                        style={{ display: 'inline', marginLeft: '5px' }}
-                                                                        onClick={() => setShowFullText(!showFullText)}
-                                                                    >
-                                                                        {showFullText ? "See Less" : "See More"}
-                                                                    </button>
-                                                                )}
-                                                            </p>
-                                                            {post.image && (
-                                                                <div className="post-image" style={post ? {
-                                                                    backgroundImage: `url(${ip}/${post.image})`,
-                                                                    backgroundPosition: 'center',
-                                                                    backgroundSize: 'cover',
-                                                                    backgroundRepeat: 'no-repeat',
-                                                                } : null}>
-
-                                                                </div>
-                                                            )}
-                                                            <div className="comment">
-                                                                <span><FaRegComment /><p>Comments</p></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </>
-                                        :
-                                        <h6>No Posts Available</h6>
-                                    }
-                                </div>
-
-
-                            </div>
-
-                            <div className="right">
-                                <form action="" onSubmit={UpdateProfileDetails}>
-                                    <h4>Edit Profile</h4>
-
-                                    <div className="username">
-                                        <label htmlFor="username">User Name:</label>
-                                        <input type="text" id="username" value={formUserName} onChange={(e) => {
-                                            setIsUpdatable(true)
-                                            setFormUserName(e.target.value)
-                                        }} />
-                                    </div>
-
-                                    <div className="phone">
-                                        <label htmlFor="phone">Phone:</label>
-                                        <input type="number" id="phone" value={formPhone} onChange={(e) => {
-                                            setIsUpdatable(true)
-                                            setFormPhone(e.target.value)
-                                        }} />
-                                    </div>
-
-                                    <div className="address">
-                                        <label htmlFor="address">Address:</label>
-                                        <input type="text" id="address" value={formAddress} onChange={(e) => {
-                                            setIsUpdatable(true)
-                                            setFormAddress(e.target.value)
-                                        }} />
-                                    </div>
-
-                                    <button disabled={!isUpdatable} type="submit" className={!isUpdatable ? 'disabled' : ''}>Update</button>
+                                    {profileImage && (
+                                        <div className="actions">
+                                            <button className="save-btn" type="submit">Save</button>
+                                            <button className="cancle-btn" type="button" onClick={() => cancleClicked()}>Cancle</button>
+                                        </div>
+                                    )}
                                 </form>
-
-                                <div className="appointment-history">
-                                    <h4>Appointment History</h4>
-
-                                    <div className="history-container">
-                                        <div className="history">
-                                            <div className="appointment-details">
-                                                <p>Dr. Doctor 1</p>
-                                                <span>28/11/2023 - 12:30 PM</span>
-                                            </div>
-                                            <button className="action"><BsExclamationCircleFill /></button>
-                                        </div>
-
-                                        <div className="history">
-                                            <div className="appointment-details">
-                                                <p>Dr. Doctor 1</p>
-                                                <span>28/11/2023 - 12:30 PM</span>
-                                            </div>
-                                            <button className="action"><BsExclamationCircleFill /></button>
-                                        </div>
-
-                                        <div className="history">
-                                            <div className="appointment-details">
-                                                <p>Dr. Doctor 1</p>
-                                                <span>28/11/2023 - 12:30 PM</span>
-                                            </div>
-                                            <button className="action"><BsExclamationCircleFill /></button>
-                                        </div>
-                                    </div>
+                                <div className="details">
+                                    <span className="date-joined"><span>Date Joined:</span> {formatDate(new Date(clientData.date_joined).toLocaleDateString())}</span>
+                                    <h4>{clientData.username}</h4>
+                                    <p><span>Email: </span>{clientData.email}</p>
+                                    <p><span>Phone: </span>{clientData.phone}</p>
+                                    <p><span>Address: </span>{clientData.address}</p>
+                                    {isCurrentUser ? 
+                                        <>
+                                            <button onClick={() => setViewPostForm(!viewPostForm)}>Upload Post</button>
+                                            &nbsp;
+                                            &nbsp;
+                                            &nbsp;
+                                            <button onClick={() => history.push('/client/edit-profile')}>Edit Profile</button>
+                                        </> : <button>Chat</button>}
                                 </div>
                             </div>
+
+                            <div className="main-container">
+                                <div className="tab-bar">
+                                    <ul>
+                                        <li onClick={() => setActiveContent('overview')} className={`overview ${activeContent === 'overview' ? 'active' : ''}`}>Overview</li>
+                                        <li onClick={() => setActiveContent('posts')} className={`posts ${activeContent === 'posts' ? 'active' : ''}`}>Posts</li>
+                                    </ul>
+                                </div>
+
+
+                                <div className="doctor-profile-contents">
+                                    {/* ========== OVERVIEW ========== */}
+                                    <div className={`content overview ${activeContent === 'overview' ? 'active' : ''}`}>
+                                        <h4>Biography of {clientData?.username}</h4>
+                                        {clientData?.speciality && <span>Field: {clientData?.speciality}</span>}
+                                        <pre>{clientData?.bio}</pre>
+
+                                        <h4>Medical Background</h4>
+                                        <pre>{clientData?.medical_background}</pre>
+                                    </div>
+
+                                    {/* ========== CLINIC LOCATION ========== */}
+                                    <div className={`content posts ${activeContent === 'posts' ? 'active' : ''}`}>
+                                        <UserPosts posts={posts} user_id={id} fetchUserPosts={fetchUserPosts} />
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+
 
                             {viewPostForm && (
-                                <div className="upload-post-form">
-                                    <form action="" onSubmit={handleAddPost}>
-                                        <div className="top">
-                                            <h6>Create Post</h6>
-                                            <RxCross2 onClick={() => setViewPostForm(!viewPostForm)} />
-                                        </div>
-                                        <div className="user-detail">
-                                            <div className="image" style={clientData ? {
-                                                backgroundImage: `url(${clientData.image})`,
-                                                backgroundPosition: 'center',
-                                                backgroundSize: 'cover',
-                                                backgroundRepeat: 'no-repeat',
-                                            } : null}>
-
-                                            </div>
-                                            <p>
-                                                <span className="name">{user.username}</span>
-                                                <span className="date">{new Date().toLocaleDateString()}</span>
-                                            </p>
-                                        </div>
-
-                                        <div className="post-content-fields">
-                                            <textarea
-                                                value={value}
-                                                onChange={handlePostTextareaChange}
-                                                placeholder="Write Your Problem..."
-                                            />
-
-                                            <div className="image-upload">
-                                                <label htmlFor="post-image" className="image-field">
-                                                    <input type="file" id="post-image" onChange={handleFileChange} />
-                                                    {
-                                                        imagePreview ?
-                                                            <img src={imagePreview} alt="" srcset="" />
-                                                            :
-                                                            <>
-                                                                <AiOutlineCloudUpload />
-                                                                <p>Upload Image</p>
-                                                            </>
-                                                    }
-                                                </label>
-                                            </div>
-                                        </div>
-
-                                        <div className="btn-container">
-                                            <button type="submit" className="upload-btn">Post</button>
-                                        </div>
-                                    </form>
-                                </div>
+                                <AddPostForm viewPostForm={viewPostForm} setViewPostForm={setViewPostForm} fetchPosts={fetchUserPosts} />
                             )}
                             {viewFullImage
                                 ?
@@ -733,7 +855,182 @@ const ClientProfile = ({ id }) => {
                                 :
                                 null
                             }
+
+
                         </>
+                        // <>
+                        //     <div className="left">
+
+                        //         <div className="bio">
+                        //             <h4 className="top">{isCurrentUser ? <>Bio <BiEdit className="edit" onClick={handleEditClick} /></> : <>Biography of Dr. Suyog Shakye</>}</h4>
+                        //             <div className="bio-container">
+                        //                 <textarea
+                        //                     ref={textareaRef}
+                        //                     value={bioText.replace(/\n/g, '\r\n')} // Handle line breaks directly in the value
+                        //                     onChange={handleTextareaChange}
+                        //                     readOnly={!isEditing}
+                        //                     rows={1}  // Set a small number of rows initially
+                        //                     style={{ resize: 'none', overflowY: 'hidden' }} // Disable textarea resizing and hide overflow
+                        //                     className={isEditing && 'editing'}
+                        //                 />
+                        //                 {isEditing && (
+                        //                     <>
+                        //                         <div>Characters remaining: {maxCharacters - bioText.length}</div>
+                        //                         <div className="actions">
+                        //                             <button disabled={disableSave} onClick={!disable && handleSaveClick}>Save</button>
+                        //                             <button onClick={handleCancelClick}>Cancel</button>
+                        //                         </div>
+                        //                     </>
+                        //                 )}
+                        //                 {saveBtnLoading && (
+                        //                     <div className="loading">
+                        //                         <div class="ld-ripple">
+                        //                             <div></div>
+                        //                             <div></div>
+                        //                         </div>
+                        //                     </div>
+                        //                 )}
+                        //             </div>
+
+                        //         </div>
+
+                        //         <div className="posts">
+                        //             {posts.length > 0
+                        //                 ?
+                        //                 <>
+                        //                     <div className="filter-div">
+                        //                         <h3>Posts</h3>
+                        //                         <button className="filter"><FiFilter /><p>Filter</p></button>
+                        //                     </div>
+
+                        //                     <div className="contents">
+                        //                         {posts && posts.map((post) => (
+                        //                             <div className="content">
+                        //                                 <div className="top">
+                        //                                     <div className="doctor-details">
+                        //                                         <div className="image" style={post ? {
+                        //                                             backgroundImage: `url(${ip}/${post.user.image})`,
+                        //                                             backgroundPosition: 'center',
+                        //                                             backgroundSize: 'cover',
+                        //                                             backgroundRepeat: 'no-repeat',
+                        //                                         } : null}>
+
+                        //                                         </div>
+                        //                                         <p>
+                        //                                             <span className="name">{post.user.username}</span>
+                        //                                             <span className="date">{new Date(post.date).toLocaleDateString()}</span>
+                        //                                         </p>
+                        //                                     </div>
+
+                        //                                     <div className="actions">
+                        //                                         <FaEdit title="Edit Post" />
+                        //                                         <MdDelete title="Delete Post" onClick={() => handleDeletePost(post.id)} />
+                        //                                     </div>
+                        //                                 </div>
+                        //                                 <div className="post-container">
+                        //                                     {/* <p className="details">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?</p> */}
+                        //                                     {/* <p className={`details ${showFullText ? "show-all" : "limited"}`}>
+                        //                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?
+                        //                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste a laborum reiciendis consequatur, tenetur deleniti at asperiores qui nulla ullam?Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum modi iure sint, eveniet id eum asperiores quis aspernatur amet consectetur nemo minima quidem maxime soluta facilis officia ad possimus repellendus. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Sint ea nulla a hic totam dolor consequatur incidunt dolorem nesciunt voluptates?
+                        //                     </p> */}
+                        //                                     {/* <p className={`details ${showFullText ? "show-all" : "limited"}`}>
+                        //                         </button>
+                        //                     )} */}
+                        //                                     <p className={`details ${showFullText ? "show-all" : "limited"}`}>
+                        //                                                 onClick={() => setShowFullText(!showFullText)}
+                        //                                             >
+                        //                                                 {showFullText ? "See Less" : "See More"}
+                        //                                             </button>
+                        //                                         )}
+                        //                                     </p>
+                        //                                     {post.image && (
+                        //                                         <div className="post-image" style={post ? {
+                        //                                             backgroundImage: `url(${ip}/${post.image})`,
+                        //                                             backgroundPosition: 'center',
+                        //                                             backgroundSize: 'cover',
+                        //                                             backgroundRepeat: 'no-repeat',
+                        //                                         } : null}>
+
+                        //                                         </div>
+                        //                                     )}
+                        //                                     <div className="comment">
+                        //                                         <span><FaRegComment /><p>Comments</p></span>
+                        //                                     </div>
+                        //                                 </div>
+                        //                             </div>
+                        //                         ))}
+                        //                     </div>
+                        //                 </>
+                        //                 :
+                        //                 <h6>No Posts Available</h6>
+                        //             }
+                        //         </div>
+
+
+                        //     </div>
+
+                        //     {/* <div className="right">
+                        //         <form action="" onSubmit={UpdateProfileDetails}>
+                        //             <h4>Edit Profile</h4>
+
+                        //             <div className="username">
+                        //                 <label htmlFor="username">User Name:</label>
+                        //                 <input type="text" id="username" value={formUserName} onChange={(e) => {
+                        //                     setIsUpdatable(true)
+                        //                     setFormUserName(e.target.value)
+                        //                 }} />
+                        //             </div>
+
+                        //             <div className="phone">
+                        //                 <label htmlFor="phone">Phone:</label>
+                        //                 <input type="number" id="phone" value={formPhone} onChange={(e) => {
+                        //                     setIsUpdatable(true)
+                        //                     setFormPhone(e.target.value)
+                        //                 }} />
+                        //             </div>
+
+                        //             <div className="address">
+                        //                 <label htmlFor="address">Address:</label>
+                        //                 <input type="text" id="address" value={formAddress} onChange={(e) => {
+                        //                     setIsUpdatable(true)
+                        //                     setFormAddress(e.target.value)
+                        //                 }} />
+                        //             </div>
+
+                        //             <button disabled={!isUpdatable} type="submit" className={!isUpdatable ? 'disabled' : ''}>Update</button>
+                        //         </form>
+
+                        //         <div className="appointment-history">
+                        //             <h4>Appointment History</h4>
+
+                        //             <div className="history-container">
+                        //                 <div className="history">
+                        //                     <div className="appointment-details">
+                        //                         <p>Dr. Doctor 1</p>
+                        //                         <span>28/11/2023 - 12:30 PM</span>
+                        //                     </div>
+                        //                     <button className="action"><BsExclamationCircleFill /></button>
+                        //                 </div>
+
+                        //                 <div className="history">
+                        //                     <div className="appointment-details">
+                        //                         <p>Dr. Doctor 1</p>
+                        //                         <span>28/11/2023 - 12:30 PM</span>
+                        //                     </div>
+                        //                     <button className="action"><BsExclamationCircleFill /></button>
+                        //                 </div>
+
+                        //                 <div className="history">
+                        //                     <div className="appointment-details">
+                        //                         <p>Dr. Doctor 1</p>
+                        //                         <span>28/11/2023 - 12:30 PM</span>
+                        //                     </div>
+                        //                     <button className="action"><BsExclamationCircleFill /></button>
+                        //                 </div>
+                        //             </div>
+                        //         </div>
+                        //     </div> */}
+                        // </>
                     )}
                 </section>
             }

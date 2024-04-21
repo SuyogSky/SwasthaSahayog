@@ -226,6 +226,7 @@
                 display: none;
 
                 &.active {
+                    visibility: visible;
                     display: flex;
                 }
             }
@@ -264,6 +265,10 @@
                 padding-top: 40px;
             }
             .reviews{
+                flex-direction: column;
+            }
+            .clinic-location{
+
                 flex-direction: column;
             }
         }

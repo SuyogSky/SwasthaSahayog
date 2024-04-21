@@ -46,7 +46,7 @@ function EditClientProfile({ clientData, fetchClientData }) {
             setDateOfBirth(clientData.date_of_birth)
             setBloodGroup(clientData.blood_group)
             setGender(clientData.gender)
-            setBioText(clientData.bio || 'NotSet')
+            setBioText(clientData.bio || '')
         }
         console.log('Client: ', clientData)
     }, [clientData])
@@ -150,7 +150,7 @@ function EditClientProfile({ clientData, fetchClientData }) {
     const [dateOfBirth, setDateOfBirth] = useState(clientData.date_of_birth)
     const [bloodGroup, setBloodGroup] = useState(clientData.blood_group)
     const [gender, setGender] = useState(clientData.gender)
-    const [bioText, setBioText] = useState(clientData?.bio || 'Not Set'); // Initialize with an empty string if clientData or bio is undefined
+    const [bioText, setBioText] = useState(clientData?.bio || ''); // Initialize with an empty string if clientData or bio is undefined
 
 
     const textareaRef = useRef(null);
@@ -263,7 +263,7 @@ function EditClientProfile({ clientData, fetchClientData }) {
 
                                             <div className="email">
                                                 <label htmlFor="email">Email Address</label>
-                                                <input type="text" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                                                <input type="text" id="email" value={email} onChange={(e) => setEmail(e.target.value)} readOnly />
                                             </div>
 
                                             <div className="phone">
@@ -330,6 +330,7 @@ function EditClientProfile({ clientData, fetchClientData }) {
                                                 <label htmlFor="bio">Bio</label>
                                                 <textarea
                                                     ref={textareaRef}
+                                                    placeholder='Not Set'
                                                     value={bioText.replace(/\n/g, '\r\n')} // Handle line breaks directly in the value
                                                     onChange={handleTextareaChange}
                                                     rows={1}  // Set a small number of rows initially

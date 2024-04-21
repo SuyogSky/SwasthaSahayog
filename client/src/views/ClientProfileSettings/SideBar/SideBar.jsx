@@ -66,7 +66,7 @@ function SideBar({ clientData }) {
 
             </div>
             <h4>{clientData.username}</h4>
-            <p>{calculateAge(clientData.date_of_birth) + ' Years Old' || 'Not Set'}</p>
+            <p>{clientData.date_of_birth ? calculateAge(clientData.date_of_birth) + ' Years Old' : 'Age: Not Set'}</p>
           </div>
         </div>
       </div>

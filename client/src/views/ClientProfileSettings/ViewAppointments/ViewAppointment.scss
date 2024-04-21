@@ -102,6 +102,13 @@
                                 color: #f0735a !important;
                             }
                         }
+                        &.canceled {
+                            p {
+                                background-color: #f0735a1a !important;
+                                border: 1px solid #f0735a1a !important;
+                                color: #f0735a !important;
+                            }
+                        }
 
                         &.completed {
                             p {
@@ -155,6 +162,8 @@
 
                                     span {
                                         border: 2px solid white;
+                                        color: white;
+
                                     }
                                 }
                             }

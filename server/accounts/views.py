@@ -60,19 +60,22 @@ class ClientRegisterView(generics.CreateAPIView):
 class NewRegisterView(APIView):
     def post(self, request):
         try:
-            serializer = ClientRegisterSerializer(data = request.data)
-            if not serializer.is_valid():
-                return Response({
-                    'status': 403,
-                    'error': serializer.errors
-                })
+            email = request.data.get('email')
             
+            existing_user = BaseUser.objects.filter(email=email, is_email_verified=True)
+            if existing_user.exists():
+                return Response({'status': 409, 'error': 'Email is already registered.'}, status=status.HTTP_409_CONFLICT)
+            
+            serializer = ClientRegisterSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response({'status': 403, 'error': serializer.errors})
+                
             serializer.save()
 
-            return Response({'status': 200, 'message': 'An OTP has been sent in your email.'})
+            return Response({'status': 200, 'message': 'An OTP has been sent to your email.'})
         except Exception as e:
             print(e)
-            return Response({'status': 404, 'error': 'Something went wrong.'})
+            return Response({'status': 500, 'error': 'Something went wrong.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class VerifyOtp(APIView):
     def post(self, request):
@@ -116,10 +119,50 @@ class DoctorRegisterView(generics.CreateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = DoctorRegisterSerializer
 
+class NewDoctorRegisterView(APIView):
+    def post(self, request):
+        try:
+            email = request.data.get('email')
+            
+            existing_user = BaseUser.objects.filter(email=email, is_email_verified=True)
+            if existing_user.exists():
+                return Response({'status': 409, 'error': 'Email is already registered.'}, status=status.HTTP_409_CONFLICT)
+            
+            serializer = DoctorRegisterSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response({'status': 403, 'error': serializer.errors})
+                
+            serializer.save()
+
+            return Response({'status': 200, 'message': 'An OTP has been sent to your email.'})
+        except Exception as e:
+            print(e)
+            return Response({'status': 500, 'error': 'Something went wrong.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class PharmacistRegisterView(generics.CreateAPIView):
     queryset = Pharmacist.objects.all()
     permission_classes = (AllowAny,)
     serializer_class = PharmacistRegisterSerializer
+
+class NewPharmacistRegisterView(APIView):
+    def post(self, request):
+        try:
+            email = request.data.get('email')
+            
+            existing_user = BaseUser.objects.filter(email=email, is_email_verified=True)
+            if existing_user.exists():
+                return Response({'status': 409, 'error': 'Email is already registered.'}, status=status.HTTP_409_CONFLICT)
+            
+            serializer = PharmacistRegisterSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response({'status': 403, 'error': serializer.errors})
+                
+            serializer.save()
+
+            return Response({'status': 200, 'message': 'An OTP has been sent to your email.'})
+        except Exception as e:
+            print(e)
+            return Response({'status': 500, 'error': 'Something went wrong.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DoctorListView(generics.ListAPIView):
     queryset = Doctor.objects.all()
@@ -142,6 +185,13 @@ class ClientDetailView(generics.RetrieveAPIView):
 class DoctorDetailView(generics.RetrieveAPIView):
     queryset = Doctor.objects.all()
     serializer_class = DoctorSerializer
+    lookup_field = 'id'
+    permission_classes = [IsAuthenticated]
+
+
+class PharmacistDetailView(generics.RetrieveAPIView):
+    queryset = Pharmacist.objects.all()
+    serializer_class = PharmacistSerializer
     lookup_field = 'id'
     permission_classes = [IsAuthenticated]
 
@@ -228,6 +278,23 @@ class DoctorProfileEditView(generics.RetrieveUpdateDestroyAPIView):
             return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PharmacistProfileEditView(generics.RetrieveUpdateDestroyAPIView):
+    def patch(self, request, user_id, *args, **kwargs):
+        user = get_object_or_404(Pharmacist, id=user_id)
+        try:
+            user.username = request.data.get('username')
+            user.email = request.data.get('email')
+            user.phone = request.data.get('phone')
+            user.address = request.data.get('address')
+            user.bio = request.data.get('bio')
+            user.opening_time = request.data.get('opening_time')
+            user.closing_time = request.data.get('closing_time')
+
+            user.save()
+            return Response({'message': 'Profile updated successfully'}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
 
 # class MedicalBackgroundEditView(generics.RetrieveUpdateDestroyAPIView):
@@ -254,6 +321,16 @@ class MedicalBackgroundEditView(generics.RetrieveUpdateDestroyAPIView):
             return Response({'message': 'Medical Background updated successfully'}, status=status.HTTP_200_OK)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class OthersDetailsEditView(generics.RetrieveUpdateDestroyAPIView):
+    def patch(self, request, user_id, *args, **kwargs):
+        user = get_object_or_404(Pharmacist, id=user_id)
+        serializer = PharmacistSerializer(user, data=request.data, partial=True)  # Initialize serializer with instance and data
+        if serializer.is_valid():
+            serializer.save()  # Save serializer if valid
+            return Response({'message': 'Details updated successfully'}, status=status.HTTP_200_OK)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
 class ClinicLocationUpdateAPIView(APIView):
@@ -277,6 +354,30 @@ class ClinicLocationUpdateAPIView(APIView):
         
         # Serialize the updated doctor instance
         serializer = DoctorSerializer(doctor)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class PharmacyLocationUpdateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def patch(self, request, pk):
+        try:
+            pharmacist = Pharmacist.objects.get(id=pk)
+        except Pharmacist.DoesNotExist:
+            return Response({"error": "Pharmacist not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Extract the clinic_location from the request data
+        pharmacy_location = request.data.get('pharmacy_location')
+        
+        # Validate the pharmacy_location
+        if not pharmacy_location:
+            return Response({"error": "pharmacy_location is required"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Update the pharmacy_location field
+        pharmacist.pharmacy_location = pharmacy_location
+        pharmacist.save()
+        
+        # Serialize the updated pharmacist instance
+        serializer = PharmacistSerializer(pharmacist)
         
         return Response(serializer.data, status=status.HTTP_200_OK)
     

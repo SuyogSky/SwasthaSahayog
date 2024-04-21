@@ -13,6 +13,7 @@ function ViewAppointments() {
     const [pendingAppointments, setPendingAppointments] = useState([]);
     const [approvedAppointments, setApprovedAppointments] = useState([]);
     const [rejectedAppointments, setRejectedAppointments] = useState([]);
+    const [canceledAppointments, setCanceledAppointments] = useState([]);
 
     const [loading, setLoading] = useState(false)
     const fetchDoctorAppointments = async () => {
@@ -21,6 +22,7 @@ function ViewAppointments() {
         setPendingAppointments([]);
         setApprovedAppointments([]);
         setRejectedAppointments([]);
+        setCanceledAppointments([]);
 
         try {
             const response = await axios.get(`${ip}/appointment/client-appointments/`, {
@@ -50,6 +52,9 @@ function ViewAppointments() {
                 if (item.status === 'rejected') {
                     setRejectedAppointments((prevRejected) => [...prevRejected, item]);
                 }
+                if (item.status === 'canceled') {
+                    setCanceledAppointments((prevCanceled) => [...prevCanceled, item]);
+                }
             });
 
             console.log('The appointments are: ', data);
@@ -67,14 +72,14 @@ function ViewAppointments() {
     }
 
     const [isLoading, setIsLoading] = useState(false);
-    const approveAppointment = async (appointmentId) => {
+    const cancleAppointment = async (appointmentId) => {
         swal.fire({
-            title: "Confirm Appointment?",
+            title: "Cancle Appointment?",
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Approve",
+            confirmButtonText: "Yes",
         }).then(async (result) => {
             if (result.isConfirmed) {
                 setIsLoading(true);
@@ -86,9 +91,9 @@ function ViewAppointments() {
                     };
 
                     // Make an API request to approve the appointment with the Bearer token in the headers
-                    await axios.patch(`${ip}/appointment/approve/${appointmentId}`, null, { headers });
+                    await axios.patch(`${ip}/appointment/cancel/${appointmentId}`, null, { headers });
                     swal.fire({
-                        title: "Appointment Approved.",
+                        title: "Appointment Cancled.",
                         icon: "success",
                         toast: true,
                         timer: 6000,
@@ -100,7 +105,7 @@ function ViewAppointments() {
                     fetchDoctorAppointments()
                     // Optionally, you can trigger a re-fetch or update the component state
                 } catch (error) {
-                    console.error('Error approving appointment:', error.response.data);
+                    console.error('Error canceling appointment:', error.response.data);
                     swal.fire({
                         title: error.response.data,
                         icon: "error",
@@ -143,6 +148,10 @@ function ViewAppointments() {
                         setActiveTab('rejected')
                         setAppointments(rejectedAppointments)
                     }}>Rejected <span className="count">{rejectedAppointments.length}</span></li>
+                    <li className={`${activeTab === 'canceled' ? 'active' : ''}`} onClick={() => {
+                        setActiveTab('canceled')
+                        setAppointments(canceledAppointments)
+                    }}>Canceled <span className="count">{canceledAppointments.length}</span></li>
                 </ul>
             </div>
             <div className="table-container">
@@ -169,7 +178,7 @@ function ViewAppointments() {
                                     <td className={`status ${appointment.status}`}><p>{capitalizeFirstLetter(appointment.status)}</p></td>
                                     <td>{appointment.date}</td>
                                     <td>{appointment.time}</td>
-                                    <td className='action'><IoEyeOutline className='details' /> <RxCrossCircled className='reject' title='Cancle' /></td>
+                                    <td className='action'><IoEyeOutline className='details' /> {appointment.status==='pending' && <RxCrossCircled className='reject' title='Cancle' onClick={() => cancleAppointment(appointment.id)} />}</td>
                                 </tr>
                             )
                         })

@@ -1,0 +1,168 @@
+.nearby-clinics{
+    width: 100%;
+    height: calc(100vh - 80px);
+    // overflow: hidden;
+    margin-top: 80px;
+    box-shadow: inset 1px 1px 10px rgba(0,0,0,0.1);
+    display: flex;
+    .sidebar{
+        height: 100%;
+        width: max-content;
+        box-shadow: 1px 1px 10px rgba(0,0,0,0.1);
+        padding: 20px 10px;
+        display: flex;
+        justify-content: center;
+        ul{
+            li{
+                margin-bottom: 20px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                aspect-ratio: 1/1;
+                padding: 10px;
+                border-radius: 6px;
+                cursor: pointer;
+                &.active{
+                    background-color: rgba(0,0,0,0.09);
+                    &:hover{
+                        background-color: rgba(0,0,0,0.09);
+                    }
+                }
+                &:hover{
+                    background-color: rgba(0,0,0,0.06);
+                }
+                img{
+                    width: 50px;
+                }
+                p{
+                    text-align: center;
+                    font-size: 13px;
+                    margin-top: 5px;
+                }
+            }
+        }
+    }
+
+    .clinic-lists-container{
+        height: 100%;
+        padding: 15px 0px;
+        min-width: 350px;
+        h2{
+            font-size: 20px;
+            font-weight: 500;
+            padding: 0 20px;
+        }        
+        .clinic-list{
+            .doctor{
+                width: 100%;
+                display: flex;
+                gap: 20px;
+                border-bottom: 1px solid rgba(0,0,0,0.2);
+                padding: 20px 20px;
+                .image{
+                    width: 50px;
+                    height: 50px;
+                    background-color: rgba(0,0,0,0.5);
+                    border-radius: 50%;
+                    box-shadow: 1px 1px 10px rgba(0,0,0,0.2);
+                }
+                .details{
+                    h4{
+                        font-size: 16px;
+                        margin: 0;
+                    }
+                    .ratings {
+                        display: flex;
+                        align-items: center;
+                        justify-content: space-between;
+                        color: rgba(0, 0, 0, 0.5);
+                        font-size: 15px;
+                        margin: 0;
+                        margin-top: 15px;
+                        line-height: 1;
+
+                        .rating {
+                            display: inline-block;
+                            line-height: 0;
+    
+                            input {
+                                display: none;
+                            }
+    
+                            label {
+                                float: right;
+                                cursor: pointer;
+                                color: #ccc;
+                                transition: color 0.3s;
+    
+                                &:before {
+                                    content: '\2605';
+                                    font-size: 20px;
+                                }
+                            }
+    
+                            input:checked~label
+                            // label:hover,
+                            // label:hover~label 
+                            {
+                                color: rgb(198, 168, 0);
+                                transition: color 0.3s;
+                            }
+                        }
+    
+                        .stars {
+                            display: flex;
+                            align-items: center;
+                            gap: 2px;
+                            color: rgb(198, 168, 0);
+                            font-size: 22px;
+    
+                            svg {
+                                cursor: pointer;
+                            }
+                        }
+                    }
+                    .field{
+                        font-size: 14px;
+                        line-height: 1;
+                        color: rgba(0,0,0,0.5);
+                        margin-top: 10px;
+                    }
+                    .status{
+                        font-size: 12px;
+                        position: relative;
+                        padding-left: 13px;
+                        &::before{
+                            content: '';
+                            width: 10px;
+                            height: 10px;
+                            border-radius: 50%;
+                            position: absolute;
+                            top: 50%;
+                            transform: translateY(-51%);
+                            left: -1px;
+                            font-weight: 500;
+                        }
+                        &.open{
+                            color: rgb(29, 219, 29);
+                            &::before{
+                                background-color: rgb(29, 219, 29);
+                            }
+                        }
+                        &.closed{
+                            color: rgb(219, 29, 29);
+                            &::before{
+                                background-color: rgb(219, 29, 29);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    .map-container{
+        width: 100%;
+        height: calc(100vh - 80px);
+    }
+}

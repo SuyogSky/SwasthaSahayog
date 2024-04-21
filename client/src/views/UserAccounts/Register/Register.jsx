@@ -121,6 +121,7 @@ function Register() {
                     }),
                 });
 
+                console.log('client register response is: ', response)
                 if (response.status === 200) {
                     // history.push("/login");
                     setDisplayOTP(true)
@@ -141,9 +142,9 @@ function Register() {
                     const errorData = await response.json(); // Parse error response
                     console.log(response.status);
                     console.log("Server error:", errorData);
-                    if (errorData.email) {
+                    if (errorData.error) {
                         swal.fire({
-                            title: "User with this email already exixts.",
+                            title: errorData.error,
                             icon: "error",
                             toast: true,
                             timer: 6000,
@@ -156,7 +157,7 @@ function Register() {
                             }
                         });
                     }
-                    else if (errorData.password) {
+                    else if (errorData.error.password) {
                         swal.fire({
                             title: "Please choose stronger password.",
                             icon: "warning",
@@ -174,7 +175,7 @@ function Register() {
                     else {
                         swal.fire({
                             title: "Registration Failed",
-                            text: errorData.detail,
+                            text: errorData.error.detail,
                             icon: "error",
                             toast: true,
                             timer: 6000,
@@ -269,6 +270,53 @@ function Register() {
             console.error('Error :', error);
         }
     }
+
+
+    const resendOTP = async () => {
+        const otpData = new FormData();
+        otpData.append('email', email);
+
+        try {
+            const response = await axios.patch(`${ip}/api/verify-otp/`, otpData);
+
+            if (response.data.status === 200) {
+                const responseData = response.data;
+                console.log('OTP Resent:', responseData);
+                swal.fire({
+                    title: "New OTP Sent in yout mail.",
+                    icon: "success",
+                    toast: true,
+                    timer: 3000,
+                    position: "top-right",
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    customClass: {
+                        container: 'custom-swal-container',
+                    }
+                });
+                // history.push('/login')
+            } else {
+                console.error('Error:', response.statusText);
+                swal.fire({
+                    // title: "Please add some content description.",
+                    title: response.data.error,
+                    icon: "warning",
+                    toast: true,
+                    timer: 3000,
+                    position: "top-right",
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                    customClass: {
+                        container: 'custom-swal-container',
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error :', error);
+        }
+    }
     return (
         <section className="register-section">
             <div className="container">
@@ -331,6 +379,7 @@ function Register() {
                                         })
                                     }
                                 </div>
+                                <p className='resend-otp'>Didn't get code? <span onClick={resendOTP}>Resend</span></p>
                                 <button type="button" onClick={() => verifyOTP()}>Verify</button>
                                 <button type="button" className='cancle' onClick={() => setDisplayOTP(false)}>Cancle</button>
                             </div>

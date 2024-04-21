@@ -451,7 +451,7 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
 
                       <div className="email">
                         <label htmlFor="email">Email Address</label>
-                        <input type="text" id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} readOnly />
                       </div>
 
                       <div className="phone">
@@ -569,7 +569,7 @@ function EditDoctorProfile({ doctorData, fetchDoctorData }) {
 
                   </h3>
                   <div className="map-container">
-                    <Map doctor={doctorData} />
+                    <Map doctor={doctorData} fetchDoctorData={fetchDoctorData} />
                   </div>
                 </div>
 

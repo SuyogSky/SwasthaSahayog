@@ -12,27 +12,27 @@ import Axios from 'axios';
 import ip from "../../../../ip";
 import { useHistory } from "react-router-dom";
 import swal from 'sweetalert2';
-import userMarker from "../../../../assets/Images/user_marker.png";
-import Image from "../../../../assets/Images/marker.png";
+import UserMarker from "../../../../assets/Images/user_marker.png";
+import ClinicMarker from "../../../../assets/Images/clinic-marker.png";
 import './Map.scss'
 import useAxios from '../../../../utils/useAxios';
 const markerIcon = new L.Icon({
-    iconUrl: Image,
-    iconSize: [35, 45],
+    iconUrl: ClinicMarker,
+    iconSize: [25, 35],
     iconAnchor: [17, 46],
     popupAnchor: [0, -46],
 });
 
 const userIcon = new L.Icon({
-    iconUrl: userMarker,
-    iconSize: [35, 45],
+    iconUrl: UserMarker,
+    iconSize: [35, 35],
     iconAnchor: [17, 46],
     popupAnchor: [0, -46],
 });
 
 const ZOOM_LEVEL = 9;
 
-const ClinicLocation = ({ doctor }) => {
+const ClinicLocation = ({ doctor, fetchDoctorData }) => {
     const axios = useAxios()
     const history = useHistory();
     const [loading, setLoading] = useState(false);
@@ -59,8 +59,10 @@ const ClinicLocation = ({ doctor }) => {
             setMapCenter([currentLat, currentLong])
             console.log("Latitude:", currentLat);
             console.log("Longitude:", currentLong);
+            showClinicLocation()
         } else {
             console.error("Invalid clinic location format:", currentClinicLocation);
+            showMyLocation()
         }
     }, [doctor, currentClinicLocation])
 
@@ -105,27 +107,61 @@ const ClinicLocation = ({ doctor }) => {
         if (location.loaded && !location.error) {
             mapRef.current.flyTo([location.coordinates.lat, location.coordinates.lng], ZOOM_LEVEL, { animate: true });
         } else {
-            alert(location.error.message);
+            // alert(location.error.message);
+        }
+    };
+
+    const showClinicLocation = () => {
+        if (currentClinicLocation && currentClinicLocation.includes(",")) {
+            const [currentLat, currentLong] = currentClinicLocation.split(",").map(parseFloat);
+            mapRef.current.flyTo([currentLat, currentLong], ZOOM_LEVEL, { animate: true });
+        } else {
+            console.error("Invalid clinic location format:", currentClinicLocation);
         }
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        const clinic_location = `${selectedMarker.lat.toFixed(6)},${selectedMarker.lng.toFixed(6)}`
-        try {
-            const response = await axios.patch(
-                `${ip}/api/doctors/${doctor.id}/update_clinic_location/`,
-                { clinic_location: clinic_location },
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('token')}`
+        const clinic_location = `${selectedMarker?.lat.toFixed(6)},${selectedMarker?.lng.toFixed(6)}` || null
+        if (selectedMarker) {
+            try {
+                const response = await axios.patch(
+                    `${ip}/api/doctors/${doctor.id}/update_clinic_location/`,
+                    { clinic_location: clinic_location },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('token')}`
+                        }
                     }
-                }
-            );
-            console.log('Clinic location updated:', response.data);
-            // Handle success or update UI accordingly
-        } catch (error) {
-            console.error('Error updating clinic location:', error);
+                );
+                console.log('Clinic location updated:', response.data);
+                fetchDoctorData()
+                swal.fire({
+                    title: "Location updated successfully.",
+                    icon: "success",
+                    toast: true,
+                    timer: 3000,
+                    position: "top-right",
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    showCloseButton: true,
+                });
+                // Handle success or update UI accordingly
+            } catch (error) {
+                console.error('Error updating clinic location:', error);
+            }
+        }
+        else {
+            swal.fire({
+                title: "Please select a marker.",
+                icon: "warning",
+                toast: true,
+                timer: 3000,
+                position: "top-right",
+                timerProgressBar: true,
+                showConfirmButton: false,
+                showCloseButton: true,
+            });
         }
     };
 
@@ -191,6 +227,7 @@ const ClinicLocation = ({ doctor }) => {
                                         eventHandlers={{
                                             click: () => handleMarkerClick(marker), // Pass the marker object here
                                         }}
+                                        zIndexOffset={100}
                                     >
                                         <Popup>
                                             <b>Marker at:</b> <br />

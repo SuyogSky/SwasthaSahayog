@@ -1,0 +1,222 @@
+.register-pharmacy-section{
+    width: 100%;
+    overflow-x: hidden;
+    .banner {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-direction: column;
+        background-color: var(--main-color-light);
+        border-bottom-left-radius: 50% 200px; /* Adjust the second value for the circular effect */
+        border-bottom-right-radius: 50% 200px; /* Adjust the second value for the circular effect */
+        transform: scaleX(1.5);
+        padding: 80px 6%;
+        gap: 100px;
+        padding-top: 250px;
+        .text{
+            text-align: center;
+            h2, p{
+                transform: scaleX(0.7);
+            }
+            h2{
+                margin-bottom: 40px;
+            }
+            p{
+                max-width: 800px;
+            }
+        }
+        svg{
+            font-size: 24px;
+            color: var(--main-color-dark);
+            cursor: pointer;
+        }
+    }
+    .register-main-container{
+        width: 100%;
+        padding: 100px 6%;
+        .form-container{
+            width: 100%;
+            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 1px 1px 10px rgba(0,0,0,0.05);
+            border-radius: 5px;
+            padding: 20px 40px;
+            .top{
+                border-bottom: 1px solid rgba(0,0,0,0.2);
+                padding: 10px 0;
+                padding-bottom: 20px;
+                h2{
+                    font-weight: 600;
+                }
+            }
+            .content{
+                padding: 20px 0;
+                display: flex;
+                .guidelines{
+                    min-width: 700px;
+                    max-width: 700px    ;
+                    h4{
+                        font-size: 24px;
+                        font-weight: 600;
+                        margin: 25px 0;
+                        color: rgba(0,0,0,0.7);
+                    }
+                    p{
+                        font-size: 16px;
+                        color: rgba(0,0,0,0.5);
+                        line-height: 1.5;
+                    }
+                    ul{
+                        list-style: none;
+                        padding: 15px 0;
+                        li{
+                            margin: 20px 0;
+                            display: flex;
+                            gap: 20px;
+                            color: rgba(0,0,0,0.5);
+                            svg{
+                                width: 25px;
+                                height: 25px;
+                                background-color: var(--main-color);
+                                border-radius: 50%;
+                                padding: 2px;
+                                color: white;
+                            }
+                        }
+                    }
+                }
+                form{
+                    display: flex;
+                    flex-direction: column;
+                    padding: 30px;
+                    border: 1px solid rgba(0,0,0,0.2);
+                    width: 100%;
+                    margin: 20px;
+                    border-radius: 5px;
+                    .form-top{
+                        margin-bottom: 20px;
+                        h4{
+                            font-size: 24px;
+                            font-weight: 600;
+                            color: rgba(0,0,0,0.7);
+                            padding-bottom: 5px;
+                            border-bottom: 5px solid rgba(0,0,0,0.1);
+                            padding-bottom: 15px;
+                        }
+                        .progression-bar{
+                            display: flex;
+                            height: 5px;
+                            background-color: var(--main-color);
+                            transition: all 1s ease;
+                            border-radius: 5px;
+                            position: relative;
+                            top: -13px;
+                        }
+                    }
+                    label{
+                        font-size: 16px;
+                        font-weight: 500;
+                        span{
+                            color: red;
+                            font-size: 18px;
+                        }
+                    }
+                    input[type="text"],
+                    input[type="number"],
+                    input[type="email"],
+                    input[type="password"]{
+                        width: 100%;
+                        height: 40px;
+                        margin-bottom: 25px;
+                        padding: 0 10px;
+                        font-size: 16px;
+                        border-radius: 4px;
+                        border: 1px solid rgba(0,0,0,0.5);
+                        outline: none;
+                    }
+                    input[type="file"]{
+                        margin-bottom: 25px;
+                    }
+                    button{
+                        width: 100%;
+                        height: 40px;
+                        background-color: var(--main-color);
+                        margin-top: 20px;
+                        border: none;
+                        outline: none;
+                        border-radius: 3px;
+                        color: white;
+                        font-weight: 500;
+                    }
+                    .otp-field-container{
+                        width: 100%;
+                        height: 100vh;
+                        background-color: rgba(0,0,0,0.8);
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        z-index: 10001;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        .otp-form{
+                            background-color: white;
+                            padding: 40px;
+                            display: flex;
+                            flex-direction: column;
+                            align-items: center;
+                            border-radius: 10px;
+                            .icon{
+                                width: 80px;
+                                height: 80px;
+                                background-color: var(--main-color);
+                                border-radius: 50%;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                cursor: pointer;
+                                svg{
+                                    font-size: 42px;
+                                    transform: scaleY(1.1);
+                                    color: white;
+                                }
+                            }
+                            h4{
+                                margin: 30px;
+                                text-align: center;
+                            }
+                            .otp-fields{
+                                display: flex;
+                                gap: 15px;
+                                input{
+                                    width: 50px;
+                                    height: 50px;
+                                    text-align: center;
+                                    border: 1px solid rgba(0,0,0,0.3);
+                                    border-radius: 6px;
+                                }
+                            }
+                            .resend-otp{
+                                margin: 0;
+                                margin-top: 20px;
+                                span{
+                                    color: var(--main-color-dark);
+                                    cursor: pointer;
+                                    text-decoration: underline;
+                                }
+                            }
+                            .cancle{
+                                background: rgba(0,0,0,0.05);
+                                color: rgba(0,0,0,0.4);
+                                &:hover{
+                                    background-color: rgba(0,0,0,0.08);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+}

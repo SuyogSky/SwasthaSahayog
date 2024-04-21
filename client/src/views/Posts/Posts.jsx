@@ -43,7 +43,7 @@ function Posts() {
   }, []);
   return (
     <section className="posts-main-container">
-      <ViewPosts posts={posts}/>
+      <ViewPosts posts={posts} fetchPosts={fetchPosts}/>
     </section>
   )
 }

@@ -43,10 +43,15 @@ class MarkMessagesAsReadView(APIView):
 
         # Mark messages as read
         ChatMessage.objects.filter(
-            sender__in=[sender_id, receiver_id],
-            receiver__in=[sender_id, receiver_id],
+            sender__in=[sender_id],
+            receiver__in=[receiver_id],
             is_read=False
         ).update(is_read=True)
+        # ChatMessage.objects.filter(
+        #     sender__in=[sender_id, receiver_id],
+        #     receiver__in=[sender_id, receiver_id],
+        #     is_read=False
+        # ).update(is_read=True)
 
         return Response({'status': 'success'}, status=status.HTTP_200_OK)
     

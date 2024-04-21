@@ -7,4 +7,5 @@ urlpatterns = [
     path('post/<pk>', PostRetrieveUpdateDestroyAPIView.as_view(), name='post-list-create'),
     path('post/<int:post_id>/comment/', AddCommentView.as_view(), name='add_comment'),
     path('post-detail/<int:post_id>/', PostWithCommentsDetailView.as_view(), name='post-with-comments-detail'),
+    path('posts/<int:post_id>/delete/', PostDeleteAPIView.as_view(), name='post-delete'),
 ]

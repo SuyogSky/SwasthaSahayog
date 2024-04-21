@@ -5,6 +5,7 @@ import AddPostForm from '../AddPostForm/AddPostForm'
 
 import { BsThreeDots } from "react-icons/bs";
 import { FaRegComment } from "react-icons/fa";
+import moment from 'moment'
 
 
 const truncateWords = (text, numWords) => {
@@ -15,7 +16,7 @@ const truncateWords = (text, numWords) => {
   return words.slice(0, numWords).join(' ') + ' ...';
 };
 
-function ViewPosts({ posts }) {
+function ViewPosts({ posts, fetchPosts }) {
   const accessToken = localStorage.getItem('token')
   const currentUser = JSON.parse(sessionStorage.getItem('loggedInUser'))
   const history = useHistory()
@@ -24,7 +25,7 @@ function ViewPosts({ posts }) {
   const [showFullText, setShowFullText] = useState(false);
   return (
     <section className="posts-container">
-      {viewPostForm && (<AddPostForm viewPostForm={viewPostForm} setViewPostForm={setViewPostForm} />)}
+      {viewPostForm && (<AddPostForm viewPostForm={viewPostForm} setViewPostForm={setViewPostForm} fetchPosts={fetchPosts} />)}
       <div className="add-post">
         <div className="top">
           <div className="image" style={currentUser ? {
@@ -58,7 +59,7 @@ function ViewPosts({ posts }) {
                   </div>
                   <p onClick={() => history.push(`/profile/${post.user.id}`)}>
                     <span className="name">{post.user.username}</span>
-                    <span className="date">{new Date(post.date).toLocaleDateString()}</span>
+                    <span className="date">{moment.utc(post.date).local().startOf('seconds').fromNow()}</span>
                   </p>
                 </div>
 

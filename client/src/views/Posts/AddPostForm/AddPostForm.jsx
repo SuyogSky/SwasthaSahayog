@@ -64,6 +64,12 @@ function AddPostForm({ viewPostForm, setViewPostForm, fetchPosts }) {
             if (response.status === 201) {
                 const responseData = response.data;
                 console.log('Post added successfully:', responseData);
+                setValue('');
+                setImage('');
+                setImagePreview('');
+                fetchPosts();
+                setViewPostForm(false);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
                 swal.fire({
                     title: "Post Uploaded Successfully.",
                     icon: "success",
@@ -74,12 +80,7 @@ function AddPostForm({ viewPostForm, setViewPostForm, fetchPosts }) {
                     showConfirmButton: false,
                     showCloseButton: true,
                 });
-                setValue('');
-                setImage('');
-                setImagePreview('');
-                fetchPosts();
-                setViewPostForm(false);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
             } else {
                 console.error('Error adding post:', response.statusText);
                 swal.fire({
