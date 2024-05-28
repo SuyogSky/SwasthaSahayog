@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import './SideBar.scss'
 import { Link } from 'react-router-dom'
 import { useLocation } from 'react-router-dom/cjs/react-router-dom.min';
@@ -18,12 +18,14 @@ import { FaHeartbeat } from "react-icons/fa";
 import { MdOutlineFeedback } from "react-icons/md";
 import { IoChatbubbleEllipsesOutline } from "react-icons/io5";
 import { BiLogOutCircle } from "react-icons/bi";
+import AuthContext from '../../../context/AuthContext';
 
 function SideBar({ clientData }) {
   const location = useLocation()
   const isActiveLink = (path) => {
     return location.pathname === path;
   };
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'))
 
   function calculateAge(dateOfBirth) {
     const dob = new Date(dateOfBirth);
@@ -52,6 +54,7 @@ function SideBar({ clientData }) {
     console.log('Client Data is: ', clientData)
   }, [clientData])
 
+  const { logoutUser } = useContext(AuthContext)
   return (
     <div className="client-sidebar">
       <div className="top">
@@ -96,14 +99,11 @@ function SideBar({ clientData }) {
         <ul>
           <li><Link to='/client/dashboard' className={isActiveLink('/client/dashboard') ? 'active' : ''}><MdOutlineDashboard />Dashboard</Link></li>
           <li><Link to='/client/appointments'><FaRegCalendarCheck />Appointments</Link></li>
-          <li><Link to='/'><TbFileInvoice />Invoices</Link></li>
-          <li><Link to='/'><TiMessages />Messages</Link></li>
-          <li><Link to='/'><IoPersonOutline />Profile</Link></li>
+          <li><Link to=''><TiMessages />Messages</Link></li>
+          <li><Link to={`/profile/${currentUser.user_id}`}><IoPersonOutline />Profile</Link></li>
           <li><Link to='/client/edit-profile' className={isActiveLink('/client/edit-profile') ? 'active' : ''}><MdOutlineManageAccounts />Profile Settings</Link></li>
-          <li><Link to='/'><FaHeartbeat />Patients</Link></li>
-          <li><Link to='/'><MdOutlineFeedback />Patient Reviews</Link></li>
           <li><Link to='/client/chat'><IoChatbubbleEllipsesOutline />Chat</Link></li>
-          <li><Link to='/'><BiLogOutCircle />Logout</Link></li>
+          <li onClick={() => logoutUser()}><Link to=''><BiLogOutCircle />Logout</Link></li>
         </ul>
       </div>
 

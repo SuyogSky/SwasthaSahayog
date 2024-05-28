@@ -31,37 +31,7 @@ function Register() {
     const history = useHistory()
 
     // ========== OPT ==========
-    // display otp form
     const [displayOTP, setDisplayOTP] = useState(false)
-
-    // const [otp, setOtp] = useState(['', '', '', '', '', '']);
-
-    // // Handle OTP input change
-    // const handleOtpChange = (index, value) => {
-    //     const newOtp = [...otp];
-    //     newOtp[index] = value;
-    //     setOtp(newOtp);
-    // };
-
-    // // Handle OTP input key press
-    // const handleKeyPress = (e, index) => {
-    //     // Allow only numeric inputs
-    //     const pattern = /^[0-9\b]+$/;
-    //     if (!pattern.test(e.target.value)) {
-    //         return;
-    //     }
-
-    //     // Focus on next input field on reaching maximum length
-    //     if (e.target.value !== '' && index < 5) {
-    //         document.getElementById(`otp_${index + 1}`).focus();
-    //     }
-
-    //     // Update state
-    //     handleOtpChange(index, e.target.value);
-    // };
-
-
-
 
     const [otp, setOtp] = useState(new Array(6).fill(""))
     const handleOTPChange = (e, index) => {
@@ -393,7 +363,7 @@ function Register() {
                         <p>Become our <span>Doctor</span>.</p>
                     </div>
 
-                    <div className="pharmacist">
+                    <div className="pharmacist" onClick={() => navigate.push('/register-pharmacy')}>
                         <img src={pharmacy} alt="" />
                         <p>Register as <span>Pharmacist</span>.</p>
                     </div>

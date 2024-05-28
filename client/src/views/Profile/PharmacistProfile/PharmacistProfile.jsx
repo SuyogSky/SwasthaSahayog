@@ -472,7 +472,6 @@ const PharmacistProfile = ({ id }) => {
                                         <li onClick={() => setActiveContent('overview')} className={`overview ${activeContent === 'overview' ? 'active' : ''}`}>Overview</li>
                                         <li onClick={() => setActiveContent('posts')} className={`posts ${activeContent === 'posts' ? 'active' : ''}`}>Posts</li>
                                         {pharmacistData.delivery_service && (<li onClick={() => setActiveContent('order-medicine')} className={`order-medicine ${activeContent === 'order-medicine' ? 'active' : ''}`}>Order Medicine</li>)}
-                                        <li onClick={() => setActiveContent('reviews')} className={`reviews ${activeContent === 'reviews' ? 'active' : ''}`}>Reviews</li>
                                     </ul>
                                 </div>
 
@@ -498,11 +497,6 @@ const PharmacistProfile = ({ id }) => {
                                     {/* ========== CLINIC LOCATION ========== */}
                                     <div className={`content clinic-location ${activeContent === 'clinic-location' ? 'active' : ''}`}>
                                         <PharmacyLocation pharmacy={pharmacistData} />
-                                    </div>
-
-                                    <div className={`content reviews ${activeContent === 'reviews' ? 'active' : ''}`}>
-                                        {/* <Reviews doctor_id={id} /> */}
-                                        This is reviews page
                                     </div>
 
 

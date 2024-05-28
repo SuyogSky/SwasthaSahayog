@@ -4,7 +4,6 @@ from django.conf import settings
 
 # Create your models here.
 class Appointment(models.Model):
-    # client = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='appointment_clients')
     client = models.ForeignKey(Client, on_delete=models.CASCADE, related_name='appointment_clients')
     doctor = models.ForeignKey(Doctor, on_delete=models.CASCADE, related_name='doctor')
     date = models.DateField()

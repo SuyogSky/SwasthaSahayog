@@ -64,7 +64,6 @@ function SideBar({ pharmacistData }) {
         <ul>
           <li><Link to='/doctor' className={isActiveLink('/doctor') ? 'active' : ''}><MdOutlineDashboard />Dashboard</Link></li>
           <li><Link to='/doctor/appointments' className={isActiveLink('/doctor/appointments') ? 'active' : ''}><FaRegCalendarCheck />Appointments</Link></li>
-          <li><Link to='/'><TbFileInvoice />Invoices</Link></li>
           <li><Link to='/doctor/chat'><IoChatbubbleEllipsesOutline />Chat</Link></li>
           <li><Link to='/'><TiMessages />Messages</Link></li>
           <li><Link to='/'><IoPersonOutline />Profile</Link></li>

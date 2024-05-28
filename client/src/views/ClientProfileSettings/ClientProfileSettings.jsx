@@ -3,8 +3,6 @@ import './ClientProfileSettings.scss'
 import SideBar from './SideBar/SideBar'
 import { Link, Route, Switch, useLocation } from 'react-router-dom/cjs/react-router-dom.min'
 import PrivateRoute from "../../utils/PrivateRoutes"
-// import Dashboard from "./Dashboard/Dashboard"
-// import EditDoctorProfile from './EditProfile/EditProfile'
 import ip from '../../ip'
 import EditClientProfile from './EditProfile/EditClientProfile'
 import ViewAppointments from './ViewAppointments/ViewAppointments'

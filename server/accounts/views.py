@@ -1,9 +1,6 @@
 from django.shortcuts import render
-
 from accounts.models import BaseUser, Client, Pharmacist, Doctor
 from accounts.serializer import *
-
-
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.views import APIView
@@ -11,12 +8,9 @@ from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-
 from django.http import JsonResponse
 from django.contrib.auth.hashers import check_password
 from .helpers import *
-
-
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
@@ -28,7 +22,6 @@ class RegisterView(generics.CreateAPIView):
 
 
 # Get All Routes
-
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
@@ -403,3 +396,26 @@ class ChangePasswordView(generics.UpdateAPIView):
             return Response({'message': 'Password changed successfully.'}, status=status.HTTP_200_OK)
         else:
             return Response({'old_password': ['Incorrect password.']}, status=status.HTTP_400_BAD_REQUEST)
+        
+
+
+
+class AllDoctorListView(generics.ListAPIView):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorSerializer
+    permission_classes = [AllowAny]  # You may adjust permissions as needed
+
+
+class DoctorVerificationView(generics.UpdateAPIView):
+    queryset = Doctor.objects.all()
+    serializer_class = DoctorVerificationSerializer
+
+    def patch(self, request, *args, **kwargs):
+        instance = self.get_object()
+        print(instance.is_verified)
+        instance.is_verified = True
+        instance.save()
+        return Response({
+            'success': 1,
+            'message': 'Doctor Verified.'
+        })

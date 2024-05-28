@@ -14,27 +14,8 @@ const swal = require('sweetalert2')
 function EditDoctorProfile({ doctorData, fetchDoctorData }) {
 
   const axios = useAxios()
-  // const [currentUser, setCurrentUser] = useState(JSON.parse(sessionStorage.getItem('currentUser')))
-  // const [doctorData, setDoctorData] = useState(true)
-  // const fetchDoctorData = async () => {
-  //   fetch(`${ip}/api/doctor-profile/${currentUser.user_id}/`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //       'Authorization': `Bearer ${localStorage.getItem('token')}`,
-  //     }
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       setDoctorData(data)
-  //       setProfilePicture(data.image)
-  //       console.log('doctor detail is: ', data)
-  //     })
-  //     .catch(error => console.error('Error fetching client details:', error));
-  // }
   useEffect(() => {
     if (doctorData) {
-      // fetchDoctorData()
       setProfilePicture(doctorData.image)
       setLicenseDisplay(doctorData.medical_license)
       setUserName(doctorData.username)

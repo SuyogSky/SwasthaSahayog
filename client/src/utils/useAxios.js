@@ -32,11 +32,9 @@ const useAxios = () => {
       req.headers.Authorization = `Bearer ${response.data.access}`;
       return req;
     } catch (error) {
-      // Handle token refresh failure, e.g., log out the user
       console.error('Error refreshing token:', error);
-      logoutUser(); // You should implement the logoutUser function
-      // Optionally, you might redirect to a login page or display an error message
-      throw error; // Rethrow the error to prevent the original request from proceeding
+      logoutUser();
+      throw error;
     }
   });
 

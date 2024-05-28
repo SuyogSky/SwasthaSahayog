@@ -32,6 +32,7 @@ import RegisterPharmacy from './views/UserAccounts/RegisterPharmacy/RegisterPhar
 import PharmacistProfileSettings from './views/PharmacistProfileSettings/ProfileSettings'
 import NearbyPharmacies from './views/Nearby/NearbyPharmacies/NearbyPharmacies'
 import MedicineRemainder from './views/MedicineRemainder/MedicineRemainder'
+import VerifyDoctor from './views/Admin/VerifyDoctor/VerifyDoctor'
 
 function App() {
   // const { user } = useContext(AuthContext)
@@ -74,6 +75,8 @@ function App() {
           <PrivateRoute component={ClientProfileSettings} path='/client' />
           
           <PrivateRoute component={PharmacistProfileSettings} path='/pharmacist' />
+
+          <PrivateRoute component={VerifyDoctor} path='/verify-doctor' />
 
 
           {user && (

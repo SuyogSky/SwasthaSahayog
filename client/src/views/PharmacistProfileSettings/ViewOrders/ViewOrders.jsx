@@ -207,7 +207,7 @@ function ViewOrders() {
                     <li className={`${activeTab === 'all' ? 'active' : ''}`} onClick={() => {
                         setActiveTab('all')
                         fetchDoctorAppointments()
-                    }}>All <span className="count">{allAppointments.length}</span></li>
+                    }}>All <span className="count">1</span></li>
                     <li className={`${activeTab === 'pending' ? 'active' : ''}`} onClick={() => {
                         setActiveTab('pending')
                         setAppointments(pendingAppointments)
@@ -239,6 +239,13 @@ function ViewOrders() {
                     </thead>
 
                     <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Suyog Sky</td>
+                        <td>4/24/2024</td>
+                        <td></td>
+                        <td className='action'><IoEyeOutline className='details' /> <p className='approve'><span>✔</span></p> <RxCrossCircled className='reject' /></td>
+                    </tr>
                         {appointments ? appointments.map((appointment, index) => {
                             return (
                                 <tr>

@@ -6,11 +6,9 @@ from . import views
 urlpatterns = [
     path('token/', views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    # path('register/', views.RegisterView.as_view(), name='auth_register'),
 
     path('verify-otp/', views.VerifyOtp.as_view()),
-    # Registration paths
-    # path('register/client', views.ClientRegisterView.as_view(), name='auth_register'),
+
     path('register/client', views.NewRegisterView.as_view(), name='auth_register'),
     path('register/doctor', views.NewDoctorRegisterView.as_view(), name='auth_register'),
     path('register/pharmacist', views.NewPharmacistRegisterView.as_view(), name='auth_register'),
@@ -34,7 +32,8 @@ urlpatterns = [
     path('update-picture/<int:user_id>/', views.UpdateProfilePictureView.as_view(), name='update_picture'),
     path('edit-client-profile/<int:user_id>/', views.ClientProfileEditView.as_view(), name='update_profile'),
     
-
+    path('all-doctors/', views.AllDoctorListView.as_view(), name='doctor-list'),
+    path('doctors/<int:pk>/verify/', views.DoctorVerificationView.as_view(), name='doctor-verification'),
 
     path('test/', views.testEndPoint, name='test'),
     path('', views.getRoutes),

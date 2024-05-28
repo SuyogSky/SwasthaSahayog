@@ -9,23 +9,6 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 
-# class AppointmentListCreateView(generics.ListCreateAPIView):
-#     queryset = Appointment.objects.all()
-#     serializer_class = AppointmentSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def perform_create(self, serializer):
-#         # Associate the currently logged-in user with the appointment
-#         user = self.request.user
-#         date = self.request.data.get('date', None)
-#         time = self.request.data.get('time', None)
-#         comments = self.request.data.get('comments', None)
-#         doctor = Doctor.objects.get(id=self.request.data.get('doctor'))
-
-#         # Uncomment the next line to save the appointment with the associated doctor
-#         serializer.save(client=user, doctor=doctor, date=date, time=time, comments=comments)
-
-
 class IsClient(IsAuthenticated):
     def has_permission(self, request, view):
         return super().has_permission(request, view) and request.user.role == 'client'

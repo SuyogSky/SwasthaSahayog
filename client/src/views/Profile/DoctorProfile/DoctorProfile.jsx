@@ -422,7 +422,7 @@ const DoctorProfile = ({ id }) => {
         return formattedDate;
     }
 
-    const [activeContent, setActiveContent] = useState('overview')
+    const [activeContent, setActiveContent] = useState('clinic-location')
 
     return (
         <>
@@ -474,9 +474,9 @@ const DoctorProfile = ({ id }) => {
                             <div className="main-container">
                                 <div className="tab-bar">
                                     <ul>
+                                        <li onClick={() => setActiveContent('clinic-location')} className={`clinic-location ${activeContent === 'clinic-location' ? 'active' : ''}`}>Clinic&nbsp;Location</li>
                                         <li onClick={() => setActiveContent('overview')} className={`overview ${activeContent === 'overview' ? 'active' : ''}`}>Overview</li>
                                         <li onClick={() => setActiveContent('posts')} className={`posts ${activeContent === 'posts' ? 'active' : ''}`}>Posts</li>
-                                        <li onClick={() => setActiveContent('clinic-location')} className={`clinic-location ${activeContent === 'clinic-location' ? 'active' : ''}`}>Clinic&nbsp;Location</li>
                                         <li onClick={() => setActiveContent('book-appointment')} className={`book-appointment ${activeContent === 'book-appointment' ? 'active' : ''}`}>Book&nbsp;Appointment</li>
                                         <li onClick={() => setActiveContent('reviews')} className={`reviews ${activeContent === 'reviews' ? 'active' : ''}`}>Reviews</li>
                                     </ul>

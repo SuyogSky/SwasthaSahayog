@@ -33,13 +33,6 @@ function Chat() {
 
     // ========== For Message Details ==========
     const [message, setMessage] = useState()
-    // useEffect(() => {
-    //     try{
-    //         axios.get(baseUrl + '/get-messages/' + user_id)
-    //     } catch (error){
-    //         console.log(error)
-    //     }
-    // })
     const [newSearch, setNewSearch] = useState('')
 
     const handleSearch = (e) => {

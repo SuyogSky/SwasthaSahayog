@@ -82,7 +82,6 @@ class Doctor(BaseUser):
     medical_background = models.TextField(max_length=300, blank=True, null=True)#
     is_verified = models.BooleanField(default=False)
 
-    # region_of_service, medical_license, , 
 
     DURATIONS = [
         (10, 10),

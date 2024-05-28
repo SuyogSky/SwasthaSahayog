@@ -28,10 +28,10 @@ function BookAppointment({ doctorData }) {
 
         if (appointmentDate, appointmentTime) {
             const newAppointment = {
-                doctor: doctorData.id,  // Replace with the actual doctor ID
-                date: appointmentDate,  // Replace with the actual date
-                time: appointmentTime,  // Replace with the actual time
-                comments: appointmentComment,  // Replace with the actual comments
+                doctor: doctorData.id,
+                date: appointmentDate,
+                time: appointmentTime,
+                comments: appointmentComment,
                 status: 'pending',
             };
             console.log(newAppointment)
